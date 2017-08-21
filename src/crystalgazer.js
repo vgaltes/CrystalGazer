@@ -15,8 +15,11 @@ let commitDelimiter = function (element){
 
 let getCommitFrom = function(lines){
     let rawFiles = lines[4].split(fileDelimiter);
-    let files = rawFiles.filter(function(element){
+    let validFiles = rawFiles.filter(function(element){
         return invalidFileLines.indexOf(element) === -1;
+    });
+    let files = validFiles.map(function(element){
+        return element.replace("\r", "");
     });
 
     return {
@@ -38,6 +41,51 @@ let getCommitsInfoFrom = function(lines, commits){
     }
 };
 
+//https://medium.com/@jakubsynowiec/unique-array-values-in-javascript-7c932682766c
+let getUniqueFilesFrom = function(source){
+    let length = source.length, result = [], seen = new Set();
+    outer:  
+    for (let index = 0; index < length; index++) {
+      let value = source[index];
+      if (seen.has(value)) continue outer;
+      seen.add(value);
+      result.push(value);
+    }
+
+    return result;
+};
+
+let getAllFilesFrom = function(commits){
+    let allFiles = commits.reduce(function(files, commit){
+        return files.concat(commit.files);
+    }, []);
+
+    return allFiles;
+};
+
+let groupFilesByExtension = function(uniqueFiles){
+    return uniqueFiles.reduce(function(acc, item) {  
+        var extension = path.extname(item).substr(1);
+        var index = acc.findIndex(function(element){
+            return element.extension === extension;
+        });
+        if ( index === -1 ){
+            acc.push({extension: extension, files: 1});
+        }
+        else{
+            acc[index].files ++;
+        }
+        
+        return acc;
+    }, []);
+};
+
+let sortByNumberOfFiles = function(extensions){
+    return extensions.sort(function(a, b){
+        return b.files - a.files;
+    });
+};
+
 module.exports = {    
     init(configuration){
         allCommits = [];
@@ -56,5 +104,13 @@ module.exports = {
         return allCommits.reduce(function(numberOfFiles, commit){
             return numberOfFiles + commit.files.length;
         }, 0);
+    },
+    filesByType(){
+        let allFiles = getAllFilesFrom(allCommits);
+        let uniqueFiles = getUniqueFilesFrom(allFiles);
+        let unsortedResult = groupFilesByExtension(uniqueFiles);
+        let result = sortByNumberOfFiles(unsortedResult);    
+
+        return result;
     }
 };
