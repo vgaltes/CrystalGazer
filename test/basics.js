@@ -46,6 +46,20 @@ describe("Basic operations", function(){
 
         expect(result).to.have.ordered.deep.members(expected);
     });
+
+    it("should get authors", function(){
+        var expected = ["Jonathan Channon", "Andreas Hakansson"];
+
+        var cgConfig = {
+            workingDirectory: "test",
+            name: 'numCommits1'
+        };
+
+        cg.init(cgConfig);
+        var result = cg.authors();
+
+        expect(result).to.have.ordered.members(expected);
+    });
 });
 
 describe("Basic operations acceptance tests", function(){
@@ -94,5 +108,33 @@ describe("Basic operations acceptance tests", function(){
         var result = cg.filesByType();
 
         expect(result).to.include.ordered.deep.members(expected);
+    });
+
+    it("should get authors", function(){
+        var expected = [
+            "Andreas H├Ñkansson",
+            "Jonathan Channon",
+            "Kristian Hellang",
+            "Julien Roncaglia",
+            "chrisc",
+            "Chris Cosgriff",
+            "mdk",
+            "Dan Barua",
+            "Sifiso Shezi",
+            "Phillip Haydon",
+            "Alan Evans",
+            "Steven Robbins",
+            "Asbj├©rn Ulsberg"
+            ];
+
+        var cgConfig = {
+            workingDirectory: "test",
+            name: 'nancy'
+        };
+
+        cg.init(cgConfig);
+        var result = cg.authors();
+
+        expect(result).to.include.ordered.members(expected);
     });
 });

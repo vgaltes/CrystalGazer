@@ -7,14 +7,20 @@ let currentConfiguration = "";
 let allCommits = [];
 const invalidFileLines = ["\n", "", "\r"];
 const fileDelimiter = "\n";
-const commitRegex = /\[(.*)\],(.*),(.*),(.*)/;
+const commitRegex = /\[(.*)\],(.*)/;
 
 let commitDelimiter = function (element){
     return element.startsWith("\n") || element.startsWith("\r\n");
 };
 
 let getCommitFrom = function(lines){
-    let rawFiles = lines[4].split(fileDelimiter);
+    if(lines[1].indexOf("Thu Apr 21 10:44:14 2016") !== -1){
+        let a = 0;
+    }
+    let commitInfo = lines[1].split(',');
+    let comment = commitInfo.splice(2).join();
+
+    let rawFiles = lines[2].split(fileDelimiter);
     let validFiles = rawFiles.filter(function(element){
         return invalidFileLines.indexOf(element) === -1;
     });
@@ -24,9 +30,9 @@ let getCommitFrom = function(lines){
 
     return {
         hash: lines[0],
-        author: lines[1],
-        date: lines[2],
-        comment: lines[3],
+        author: commitInfo[0],
+        date: commitInfo[1],
+        comment: comment,
         files: files
     }
 };
@@ -112,5 +118,13 @@ module.exports = {
         let result = sortByNumberOfFiles(unsortedResult);    
 
         return result;
+    },
+    authors(){
+        let authorsSet = new Set(allCommits.reduce(function(authors, commit){
+            authors.push(commit.author);
+            return authors;
+        }, []));
+
+        return [...authorsSet];
     }
 };
