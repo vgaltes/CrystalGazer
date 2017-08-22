@@ -52,6 +52,7 @@ describe("Hotspot analysis", function(){
 });
 
 describe("Hotspot analysis acceptance tests", function(){
+    this.timeout(5000);
     it("should get the number of revisions by file", function(){
         const cgConfig = {
             workingDirectory : "test",
