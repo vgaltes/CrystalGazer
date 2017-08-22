@@ -9,6 +9,7 @@ const invalidFileLines = ["\n", "", "\r"];
 const fileDelimiter = "\n";
 const commitRegex = /\[(.*)\],(.*)/;
 
+//TODO: git log interaction can be moved to another module
 let commitDelimiter = function (element){
     return element.startsWith("\n") || element.startsWith("\r\n");
 };
@@ -25,7 +26,13 @@ let getCommitFrom = function(lines){
         return invalidFileLines.indexOf(element) === -1;
     });
     let files = validFiles.map(function(element){
-        return element.replace("\r", "");
+        let rawFile = element.replace("\r", "");
+        let fileInfo = rawFile.split("\t");
+        return {
+            added: fileInfo[0],
+            removed: fileInfo[1],
+            path: fileInfo[2]
+        }
     });
 
     return {
@@ -53,9 +60,9 @@ let getUniqueFilesFrom = function(source){
     outer:  
     for (let index = 0; index < length; index++) {
       let value = source[index];
-      if (seen.has(value)) continue outer;
-      seen.add(value);
-      result.push(value);
+      if (seen.has(value.path)) continue outer;
+      seen.add(value.path);
+      result.push(value.path);
     }
 
     return result;
@@ -86,9 +93,33 @@ let groupFilesByExtension = function(uniqueFiles){
     }, []);
 };
 
+let groupFilesByName = function(files){
+    return files.reduce(function(acc, item) {  
+        var index = acc.findIndex(function(element){
+            return element.file === item.path;
+        });
+        if ( index === -1 ){
+            acc.push({file: item.path, revisions: 1});
+        }
+        else{
+            acc[index].revisions ++;
+        }
+        
+        return acc;
+    }, []);
+};
+
 let sortByNumberOfFiles = function(extensions){
-    return extensions.sort(function(a, b){
-        return b.files - a.files;
+    return sortBy(extensions, (a, b) => b.files - a.files);
+};
+
+let sortByNumberOfRevisions = function(files){
+    return sortBy(files, (a,b) => b.revisions - a.revisions);
+};
+
+let sortBy = function(list, sortFunction){
+    return list.sort(function(a, b){
+        return sortFunction(a, b);
     });
 };
 
@@ -126,5 +157,12 @@ module.exports = {
         }, []));
 
         return [...authorsSet];
+    },
+    revisionsByFile(){
+        let allFiles = getAllFilesFrom(allCommits);
+        let timesCommited = groupFilesByName(allFiles);
+        let result = sortByNumberOfRevisions(timesCommited);
+
+        return result;
     }
 };

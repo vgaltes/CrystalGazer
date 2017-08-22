@@ -89,14 +89,14 @@ describe("Basic operations acceptance tests", function(){
 
     it("should get the files by type", function(){
         var expected = [
-            {"extension": "cs", "files": 9917},
-            {"extension": "csproj", "files": 1477},
-            {"extension": "config", "files": 666},
+            {"extension": "cs", "files": 1963},
             {"extension": "dll", "files": 401},
-            {"extension": "cshtml", "files": 274},
-            {"extension": "xml", "files": 268},
-            {"extension": "spark", "files": 192},
-            {"extension": "nuspec", "files": 150}
+            {"extension": "config", "files": 256},
+            {"extension": "csproj", "files": 204},
+            {"extension": "xml", "files": 143},
+            {"extension": "cshtml", "files": 139},
+            {"extension": "spark", "files": 110},
+            {"extension": "nupkg", "files": 62}
         ];
 
         var cgConfig = {
