@@ -50,3 +50,25 @@ describe("Hotspot analysis", function(){
     });
 
 });
+
+describe("Hotspot analysis acceptance tests", function(){
+    it("should get the number of revisions by file", function(){
+        const cgConfig = {
+            workingDirectory : "test",
+            name: "nancy"
+        };
+
+        const expected = [
+            {file: "src/Nancy/Nancy.csproj", revisions: 363},
+            {file: "src/Nancy.Tests/Nancy.Tests.csproj", revisions: 207},
+            {file: "src/Nancy.sln", revisions: 141},
+            {file: "src/Nancy/NancyEngine.cs", revisions: 113}
+        ];
+
+        cg.init(cgConfig);
+        let result = cg.revisionsByFile();
+
+        expect(result).to.include.ordered.deep.members(expected);
+    });
+
+});
