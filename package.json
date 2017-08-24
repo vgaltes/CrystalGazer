@@ -4,7 +4,7 @@
   "description": "A command line utility to analyse a Git repository",
   "main": "index.js",
   "scripts": {
-    "test": "mocha ./test/**/*.js --recursive"
+    "test": "mocha './test/{,!(testRepo)/**/}*.js' --recursive"
   },
   "repository": {
     "type": "git",

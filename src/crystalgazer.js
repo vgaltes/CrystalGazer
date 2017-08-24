@@ -76,6 +76,28 @@ let getAllFilesFrom = function(commits){
     return allFiles;
 };
 
+// https://stackoverflow.com/questions/12453057/node-js-count-the-number-of-lines-in-a-file
+let getLinesOfFile = function(file){
+    let filePath = path.join(currentConfiguration.workingDirectory, file)
+    if (fs.existsSync(filePath)===false){
+        return -1;
+    }
+
+    var data = fs.readFileSync(filePath);
+    return data.toString().split('\n').length;
+};
+
+let getLinesFor = function(files){
+    return files.map(function(file){
+        return {
+            file: file.path,
+            lines: getLinesOfFile(file.path)
+        };
+    }).filter(function(file){
+        return file.lines !== -1;
+    });
+};
+
 let groupFilesByExtension = function(uniqueFiles){
     return uniqueFiles.reduce(function(acc, item) {  
         var extension = path.extname(item).substr(1);
@@ -115,6 +137,10 @@ let sortByNumberOfFiles = function(extensions){
 
 let sortByNumberOfRevisions = function(files){
     return sortBy(files, (a,b) => b.revisions - a.revisions);
+};
+
+let sortByNumberOfLines = function(files){
+    return sortBy(files, (a,b) => b.lines - a.lines);
 };
 
 let sortBy = function(list, sortFunction){
@@ -162,6 +188,13 @@ module.exports = {
         let allFiles = getAllFilesFrom(allCommits);
         let timesCommited = groupFilesByName(allFiles);
         let result = sortByNumberOfRevisions(timesCommited);
+
+        return result;
+    },
+    linesByFile(){
+        let allFiles = getAllFilesFrom(allCommits);
+        let filesWithLines = getLinesFor(allFiles);
+        let result = sortByNumberOfLines(filesWithLines);
 
         return result;
     }

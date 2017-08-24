@@ -8,7 +8,7 @@ const expect = chai.expect;
 describe("Hotspot analysis", function(){
     it("should get the number of revisions by file", function(){
         const cgConfig = {
-            workingDirectory : "test",
+            workingDirectory : "test/testRepo",
             name: "numCommits1"
         };
 
@@ -49,13 +49,39 @@ describe("Hotspot analysis", function(){
         expect(result).to.include.ordered.deep.members(expected);
     });
 
+    it("should get the number of lines of each file", function(){
+        const cgConfig = {
+            workingDirectory : "test/testRepo",
+            name: "numCommits1"
+        };
+
+        let expected = [
+            {
+                file: "samples/Nancy.Demo.Hosting.Aspnet/MainModule.js",
+                lines: 40
+            },
+            {
+                file: "samples/Nancy.Demo.Authentication.Stateless/AuthModule.cs",
+                lines: 35
+            },
+            {
+                file: "samples/Nancy.Demo.Authentication/MainModule.cs",
+                lines: 25
+            }];
+
+        cg.init(cgConfig);
+        let result = cg.linesByFile();
+
+        expect(result).to.have.ordered.deep.members(expected);
+    });
+
 });
 
 describe("Hotspot analysis acceptance tests", function(){
     this.timeout(5000);
     it("should get the number of revisions by file", function(){
         const cgConfig = {
-            workingDirectory : "test",
+            workingDirectory : "test/testRepo",
             name: "nancy"
         };
 

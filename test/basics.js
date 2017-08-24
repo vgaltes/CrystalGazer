@@ -8,7 +8,7 @@ const expect = chai.expect;
 describe("Basic operations", function(){
     it("should get the number of commits", function(){
         var cgConfig = {
-            workingDirectory: "test",
+            workingDirectory: "test/testRepo",
             name: 'numCommits1'
         };
 
@@ -20,7 +20,7 @@ describe("Basic operations", function(){
 
     it("should get the number of files changed", function(){
         var cgConfig = {
-            workingDirectory: "test",
+            workingDirectory: "test/testRepo",
             name: 'numCommits1'
         };
 
@@ -37,7 +37,7 @@ describe("Basic operations", function(){
         ];
 
         var cgConfig = {
-            workingDirectory: "test",
+            workingDirectory: "test/testRepo",
             name: 'numCommits1'
         };
 
@@ -51,7 +51,7 @@ describe("Basic operations", function(){
         var expected = ["Jonathan Channon", "Andreas Hakansson"];
 
         var cgConfig = {
-            workingDirectory: "test",
+            workingDirectory: "test/testRepo",
             name: 'numCommits1'
         };
 
@@ -65,7 +65,7 @@ describe("Basic operations", function(){
 describe("Basic operations acceptance tests", function(){
     it("should get the number of commits", function(){
         var cgConfig = {
-            workingDirectory: "test",
+            workingDirectory: "test/testRepo",
             name: 'nancy'
         };
 
@@ -77,7 +77,7 @@ describe("Basic operations acceptance tests", function(){
 
     it("should get the number of files changed", function(){
         var cgConfig = {
-            workingDirectory: "test",
+            workingDirectory: "test/testRepo",
             name: 'nancy'
         };
 
@@ -100,7 +100,7 @@ describe("Basic operations acceptance tests", function(){
         ];
 
         var cgConfig = {
-            workingDirectory: "test",
+            workingDirectory: "test/testRepo",
             name: 'nancy'
         };
 
@@ -128,7 +128,7 @@ describe("Basic operations acceptance tests", function(){
             ];
 
         var cgConfig = {
-            workingDirectory: "test",
+            workingDirectory: "test/testRepo",
             name: 'nancy'
         };
 
