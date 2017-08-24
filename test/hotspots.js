@@ -98,4 +98,26 @@ describe("Hotspot analysis acceptance tests", function(){
         expect(result).to.include.ordered.deep.members(expected);
     });
 
+    it("should get the number of lines of each file", function(){
+        const cgConfig = {
+            workingDirectory : "test/testRepo",
+            name: "nancy"
+        };
+
+        let expected = [
+            {
+                file: "samples/Nancy.Demo.Authentication.Stateless/AuthModule.cs",
+                lines: 35
+            },
+            {
+                file: "samples/Nancy.Demo.Authentication/MainModule.cs",
+                lines: 25
+            }
+        ];
+
+        cg.init(cgConfig);
+        let result = cg.linesByFile();
+
+        expect(result).to.have.ordered.deep.members(expected);
+    });
 });

@@ -84,16 +84,20 @@ let getLinesOfFile = function(file){
     }
 
     var data = fs.readFileSync(filePath);
-    return data.toString().split('\n').length;
+    let result = data.toString().split('\n').length;
+    return result;
 };
 
 let getLinesFor = function(files){
     return files.map(function(file){
         return {
-            file: file.path,
-            lines: getLinesOfFile(file.path)
+            file: file,
+            lines: getLinesOfFile(file)
         };
     }).filter(function(file){
+        if ( file === "samples/Nancy.Demo.Authentication/MainModule.cs"){
+            let a = 0;
+        }
         return file.lines !== -1;
     });
 };
@@ -193,7 +197,8 @@ module.exports = {
     },
     linesByFile(){
         let allFiles = getAllFilesFrom(allCommits);
-        let filesWithLines = getLinesFor(allFiles);
+        let uniqueFiles = getUniqueFilesFrom(allFiles);
+        let filesWithLines = getLinesFor(uniqueFiles);
         let result = sortByNumberOfLines(filesWithLines);
 
         return result;
