@@ -76,6 +76,53 @@ let getAllFilesFrom = function(commits){
     return allFiles;
 };
 
+let getAllFilesWithCommitInformation = function(commits){
+    return commits.filter(function(commit){
+            return commit.files.length > 0;
+        }).map(function(commit){
+            let files = commit.files.map(function(file){
+                return {
+                    file: file.path,
+                    hash: commit.hash,
+                    date: commit.date,
+                    author: commit.author
+                };
+            });
+            return files;
+    }).reduce(function(accum, element){
+        return accum.concat(element);
+    }, []);
+};
+
+let groupCommitsByFile = function(files){
+    return files.reduce(function(acc, file){
+        var index = acc.findIndex(function(element){
+            if ( element.length === 0){
+                return false;
+            }
+            if( element[0].file === file.file ){
+                return true;
+            } else {
+                return false;
+            }
+        });
+
+        if (index === -1){
+            acc.push([file]);
+        }
+        else{
+            acc[index].push(file);
+        }
+
+        return acc;
+    }, []);
+};
+
+let getAllCommitsByFileFrom = function(commits){
+    let allFilesByCommit = getAllFilesWithCommitInformation(commits);
+    return groupCommitsByFile(allFilesByCommit);    
+};
+
 // https://stackoverflow.com/questions/12453057/node-js-count-the-number-of-lines-in-a-file
 let getLinesOfFile = function(file){
     let filePath = path.join(currentConfiguration.workingDirectory, file)
@@ -147,6 +194,10 @@ let sortByNumberOfLines = function(files){
     return sortBy(files, (a,b) => b.lines - a.lines);
 };
 
+let sortByNumberOfCommits = function(files){
+    return sortBy(files, (a, b) => b.length - a.length);
+};
+
 let sortBy = function(list, sortFunction){
     return list.sort(function(a, b){
         return sortFunction(a, b);
@@ -201,6 +252,18 @@ module.exports = {
         let filesWithLines = getLinesFor(uniqueFiles);
         let result = sortByNumberOfLines(filesWithLines);
 
+        return result;
+    },
+    authorsByFile(){
+        let allFiles = getAllCommitsByFileFrom(allCommits);
+        let sortedFiles = sortByNumberOfCommits(allFiles);
+
+        let result = sortedFiles.map(function(element){
+            return {
+                file: element[0].file,
+                authors: element.length
+            };
+        });
         return result;
     }
 };

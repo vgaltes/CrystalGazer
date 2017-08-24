@@ -19,7 +19,7 @@
 2	3	samples/Nancy.Demo.CustomModule/UglifiedNancyModule.js
 3	3	samples/Nancy.Demo.Hosting.Aspnet/DependencyModule.js
 
-[c1d6a2c0acf324aa7f6c117593db6c7ab2628390],Andreas Hakansson,Fri May 6 10:49:47 2016,Introduced new route declaration syntax again
+[c1d6a2c0acf324aa7f6c117593db6c7ab2628390],Jonathan Channon,Fri May 6 10:49:47 2016,Introduced new route declaration syntax again
 4	1	samples/Nancy.Demo.Authentication.Basic/MainModule.js
 6	3	samples/Nancy.Demo.Authentication.Basic/SecureModule.js
 23	3	samples/Nancy.Demo.Authentication.Forms/MainModule.cs

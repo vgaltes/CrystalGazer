@@ -75,6 +75,49 @@ describe("Hotspot analysis", function(){
         expect(result).to.have.ordered.deep.members(expected);
     });
 
+    it("should get the number of authors by file", function(){
+        const cgConfig = {
+            workingDirectory : "test/testRepo",
+            name: "numCommits1"
+        };
+
+        const expected = [
+            {
+                file: "samples/Nancy.Demo.Authentication.Forms/MainModule.cs",
+                authors: 2
+            },
+            {
+                file: "samples/Nancy.Demo.Authentication/MainModule.cs",
+                authors: 1
+            },
+            {
+                file: "samples/Nancy.Demo.Authentication.Basic/SecureModule.cs",
+                authors: 1
+            },
+            {
+                file: "samples/Nancy.Demo.Hosting.Aspnet/MainModule.js",
+                authors: 1
+            },
+            {
+                file: "samples/Nancy.Demo.Authentication.Forms/PartlySecureModule.cs",
+                authors: 1
+            },
+            {
+                file: "samples/Nancy.Demo.Authentication.Forms/SecureModule.cs",
+                authors: 1
+            },
+            {
+                file: "samples/Nancy.Demo.Authentication.Stateless/AuthModule.cs",
+                authors: 1
+            }
+        ];
+
+        cg.init(cgConfig);
+        let result = cg.authorsByFile();
+
+        expect(result).to.include.ordered.deep.members(expected);
+    });
+
 });
 
 describe("Hotspot analysis acceptance tests", function(){
