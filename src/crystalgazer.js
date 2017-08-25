@@ -3,56 +3,12 @@
 const fs = require('fs');
 const path = require('path');
 const complexity = require('../src/complexityAnaliser.js');
+const gitInfo = require('../src/gitInfo.js');
 
 let currentConfiguration = "";
-let allCommits = [];
-const invalidFileLines = ["\n", "", "\r"];
-const fileDelimiter = "\n";
-const commitRegex = /\[(.*)\],(.*)/;
-const tab = "\t";
-const carrierReturn = "\r";
+
 
 //TODO: git log interaction can be moved to another module
-let commitDelimiter = function (element){
-    return element.startsWith("\n") || element.startsWith("\r\n");
-};
-
-let getCommitFrom = function(lines){
-    let commitInfo = lines[1].split(',');
-    let comment = commitInfo.splice(2).join();
-
-    let rawFiles = lines[2].split(fileDelimiter);
-    let validFiles = rawFiles.filter(function(element){
-        return invalidFileLines.indexOf(element) === -1;
-    });
-    let files = validFiles.map(function(element){
-        let rawFile = element.replace(carrierReturn, "");
-        let fileInfo = rawFile.split(tab);
-        return {
-            added: fileInfo[0],
-            removed: fileInfo[1],
-            path: fileInfo[2]
-        }
-    });
-
-    return {
-        hash: lines[0],
-        author: commitInfo[0],
-        date: commitInfo[1],
-        comment: comment,
-        files: files
-    }
-};
-
-let getCommitsInfoFrom = function(lines, commits){
-    let indexEndFirstGroup = lines.findIndex(commitDelimiter);
-    
-    if ( indexEndFirstGroup !== -1 ){
-        let remainingLines = lines.splice(indexEndFirstGroup + 1);
-        commits.push(getCommitFrom(lines));
-        getCommitsInfoFrom(remainingLines, commits);
-    }
-};
 
 //https://medium.com/@jakubsynowiec/unique-array-values-in-javascript-7c932682766c
 let getUniqueFilesFrom = function(source){
@@ -69,11 +25,7 @@ let getUniqueFilesFrom = function(source){
 };
 
 let getAllFilesFrom = function(commits){
-    let allFiles = commits.reduce(function(files, commit){
-        return files.concat(commit.files);
-    }, []);
-
-    return allFiles;
+    return gitInfo.files();
 };
 
 let getAllFilesWithCommitInformation = function(commits){
@@ -121,6 +73,23 @@ let groupCommitsByFile = function(files){
 let getAllCommitsByFileFrom = function(commits){
     let allFilesByCommit = getAllFilesWithCommitInformation(commits);
     return groupCommitsByFile(allFilesByCommit);    
+};
+
+let getAllCommitsFor = function(commits, filePath){
+    let commitsForFile = commits.filter(function(element){
+        let fileIndex = element.files.findIndex(function(file){
+            return file.path === filePath;
+        });
+
+        return fileIndex !== -1;
+    }).map(function(element){
+        return {
+            hash: element.hash,
+            date: element.date
+        };
+    });
+
+    return commitsForFile;
 };
 
 // https://stackoverflow.com/questions/12453057/node-js-count-the-number-of-lines-in-a-file
@@ -178,6 +147,20 @@ let groupFilesByName = function(files){
     }, []);
 };
 
+let getComplexityFor = function(commits, filePath){
+    // return commits.map(function(commit){
+    //     const file = git.getFileRevision(commit.hash, filePath);
+    //     const tabs = complexity.maxNumberOfTabs(file);
+    //     const lines = complexity.numberOfLines(file);
+    //     return {
+    //         hash: commit.hash,
+    //         date: commit.date,
+    //         maxNumberOfTabs: maxNumberOfTabs,
+    //         numberOfLines: numberOfLines
+    //     };
+    // });
+};
+
 let sortByNumberOfFiles = function(extensions){
     return sortBy(extensions, (a, b) => b.files - a.files);
 };
@@ -202,25 +185,23 @@ let sortBy = function(list, sortFunction){
 
 module.exports = {    
     init(configuration){
-        allCommits = [];
+        gitInfo.allCommits = [];
         currentConfiguration = configuration;
         const filePath = path.join(currentConfiguration.workingDirectory, './.cg', currentConfiguration.name + '.log');
         const fileContents = fs.readFileSync(filePath).toString();
 
-        const allRawCommits = fileContents.split(commitRegex).splice(1);
-
-        getCommitsInfoFrom(allRawCommits, allCommits);
+        gitInfo.initFrom(fileContents);
     },
     numberOfCommits(){
-        return allCommits.length;
+        return gitInfo.commits().length;
     },
     numberOfFilesChanged(){
-        return allCommits.reduce(function(numberOfFiles, commit){
+        return gitInfo.commits().reduce(function(numberOfFiles, commit){
             return numberOfFiles + commit.files.length;
         }, 0);
     },
     filesByType(){
-        const allFiles = getAllFilesFrom(allCommits);
+        const allFiles = gitInfo.files();
         const uniqueFiles = getUniqueFilesFrom(allFiles);
         const unsortedResult = groupFilesByExtension(uniqueFiles);
         const result = sortByNumberOfFiles(unsortedResult);    
@@ -228,22 +209,17 @@ module.exports = {
         return result;
     },
     authors(){
-        const authorsSet = new Set(allCommits.reduce(function(authors, commit){
-            authors.push(commit.author);
-            return authors;
-        }, []));
-
-        return [...authorsSet];
+        return gitInfo.authors()
     },
     revisionsByFile(){
-        const allFiles = getAllFilesFrom(allCommits);
+        const allFiles = gitInfo.files();
         const timesCommited = groupFilesByName(allFiles);
         const result = sortByNumberOfRevisions(timesCommited);
 
         return result;
     },
     linesByFile(){
-        const allFiles = getAllFilesFrom(allCommits);
+        const allFiles = gitInfo.files();
         const uniqueFiles = getUniqueFilesFrom(allFiles);
         const filesWithLines = getLinesFor(uniqueFiles);
         const result = sortByNumberOfLines(filesWithLines);
@@ -251,7 +227,7 @@ module.exports = {
         return result;
     },
     authorsByFile(){
-        const allFiles = getAllCommitsByFileFrom(allCommits);
+        const allFiles = getAllCommitsByFileFrom(gitInfo.commits());
         const sortedFiles = sortByNumberOfCommits(allFiles);
         const result = sortedFiles.map(function(element){
             return {
@@ -260,5 +236,11 @@ module.exports = {
             };
         });
         return result;
+    },
+    complexityOverTime(filePath){
+        const allCommitsForFile = getAllCommitsFor(gitInfo.commits(), filePath);
+        const complexity = getComplexityFor(allCommitsForFile, filePath);
+
+        return complexity;
     }
 };
