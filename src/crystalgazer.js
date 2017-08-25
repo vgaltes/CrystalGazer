@@ -2,12 +2,15 @@
 
 const fs = require('fs');
 const path = require('path');
+const complexity = require('../src/complexityAnaliser.js');
 
 let currentConfiguration = "";
 let allCommits = [];
 const invalidFileLines = ["\n", "", "\r"];
 const fileDelimiter = "\n";
 const commitRegex = /\[(.*)\],(.*)/;
+const tab = "\t";
+const carrierReturn = "\r";
 
 //TODO: git log interaction can be moved to another module
 let commitDelimiter = function (element){
@@ -15,9 +18,6 @@ let commitDelimiter = function (element){
 };
 
 let getCommitFrom = function(lines){
-    if(lines[1].indexOf("Thu Apr 21 10:44:14 2016") !== -1){
-        let a = 0;
-    }
     let commitInfo = lines[1].split(',');
     let comment = commitInfo.splice(2).join();
 
@@ -26,8 +26,8 @@ let getCommitFrom = function(lines){
         return invalidFileLines.indexOf(element) === -1;
     });
     let files = validFiles.map(function(element){
-        let rawFile = element.replace("\r", "");
-        let fileInfo = rawFile.split("\t");
+        let rawFile = element.replace(carrierReturn, "");
+        let fileInfo = rawFile.split(tab);
         return {
             added: fileInfo[0],
             removed: fileInfo[1],
@@ -96,7 +96,7 @@ let getAllFilesWithCommitInformation = function(commits){
 
 let groupCommitsByFile = function(files){
     return files.reduce(function(acc, file){
-        var index = acc.findIndex(function(element){
+        const index = acc.findIndex(function(element){
             if ( element.length === 0){
                 return false;
             }
@@ -125,14 +125,13 @@ let getAllCommitsByFileFrom = function(commits){
 
 // https://stackoverflow.com/questions/12453057/node-js-count-the-number-of-lines-in-a-file
 let getLinesOfFile = function(file){
-    let filePath = path.join(currentConfiguration.workingDirectory, file)
+    const filePath = path.join(currentConfiguration.workingDirectory, file)
     if (fs.existsSync(filePath)===false){
         return -1;
     }
 
-    var data = fs.readFileSync(filePath);
-    let result = data.toString().split('\n').length;
-    return result;
+    const data = fs.readFileSync(filePath);
+    return complexity.numberOfLines(data);
 };
 
 let getLinesFor = function(files){
@@ -142,17 +141,14 @@ let getLinesFor = function(files){
             lines: getLinesOfFile(file)
         };
     }).filter(function(file){
-        if ( file === "samples/Nancy.Demo.Authentication/MainModule.cs"){
-            let a = 0;
-        }
         return file.lines !== -1;
     });
 };
 
 let groupFilesByExtension = function(uniqueFiles){
     return uniqueFiles.reduce(function(acc, item) {  
-        var extension = path.extname(item).substr(1);
-        var index = acc.findIndex(function(element){
+        const extension = path.extname(item).substr(1);
+        const index = acc.findIndex(function(element){
             return element.extension === extension;
         });
         if ( index === -1 ){
@@ -168,7 +164,7 @@ let groupFilesByExtension = function(uniqueFiles){
 
 let groupFilesByName = function(files){
     return files.reduce(function(acc, item) {  
-        var index = acc.findIndex(function(element){
+        const index = acc.findIndex(function(element){
             return element.file === item.path;
         });
         if ( index === -1 ){
@@ -208,10 +204,10 @@ module.exports = {
     init(configuration){
         allCommits = [];
         currentConfiguration = configuration;
-        let filePath = path.join(currentConfiguration.workingDirectory, './.cg', currentConfiguration.name + '.log');
-        let fileContents = fs.readFileSync(filePath).toString();
+        const filePath = path.join(currentConfiguration.workingDirectory, './.cg', currentConfiguration.name + '.log');
+        const fileContents = fs.readFileSync(filePath).toString();
 
-        let allRawCommits = fileContents.split(commitRegex).splice(1);
+        const allRawCommits = fileContents.split(commitRegex).splice(1);
 
         getCommitsInfoFrom(allRawCommits, allCommits);
     },
@@ -224,15 +220,15 @@ module.exports = {
         }, 0);
     },
     filesByType(){
-        let allFiles = getAllFilesFrom(allCommits);
-        let uniqueFiles = getUniqueFilesFrom(allFiles);
-        let unsortedResult = groupFilesByExtension(uniqueFiles);
-        let result = sortByNumberOfFiles(unsortedResult);    
+        const allFiles = getAllFilesFrom(allCommits);
+        const uniqueFiles = getUniqueFilesFrom(allFiles);
+        const unsortedResult = groupFilesByExtension(uniqueFiles);
+        const result = sortByNumberOfFiles(unsortedResult);    
 
         return result;
     },
     authors(){
-        let authorsSet = new Set(allCommits.reduce(function(authors, commit){
+        const authorsSet = new Set(allCommits.reduce(function(authors, commit){
             authors.push(commit.author);
             return authors;
         }, []));
@@ -240,25 +236,24 @@ module.exports = {
         return [...authorsSet];
     },
     revisionsByFile(){
-        let allFiles = getAllFilesFrom(allCommits);
-        let timesCommited = groupFilesByName(allFiles);
-        let result = sortByNumberOfRevisions(timesCommited);
+        const allFiles = getAllFilesFrom(allCommits);
+        const timesCommited = groupFilesByName(allFiles);
+        const result = sortByNumberOfRevisions(timesCommited);
 
         return result;
     },
     linesByFile(){
-        let allFiles = getAllFilesFrom(allCommits);
-        let uniqueFiles = getUniqueFilesFrom(allFiles);
-        let filesWithLines = getLinesFor(uniqueFiles);
-        let result = sortByNumberOfLines(filesWithLines);
+        const allFiles = getAllFilesFrom(allCommits);
+        const uniqueFiles = getUniqueFilesFrom(allFiles);
+        const filesWithLines = getLinesFor(uniqueFiles);
+        const result = sortByNumberOfLines(filesWithLines);
 
         return result;
     },
     authorsByFile(){
-        let allFiles = getAllCommitsByFileFrom(allCommits);
-        let sortedFiles = sortByNumberOfCommits(allFiles);
-
-        let result = sortedFiles.map(function(element){
+        const allFiles = getAllCommitsByFileFrom(allCommits);
+        const sortedFiles = sortByNumberOfCommits(allFiles);
+        const result = sortedFiles.map(function(element){
             return {
                 file: element[0].file,
                 authors: element.length
