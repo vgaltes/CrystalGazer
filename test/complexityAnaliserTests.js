@@ -5,7 +5,7 @@ const expect = require('chai').expect;
 const complexity = require('../src/complexityAnaliser.js');
 const fs = require('fs');
 
-describe("Number of lines", function(){
+describe("Basic complexity operations", function(){
     it("should get the number of lines", function(){
         const file = fs.readFileSync('./test/testRepo/aFile.cs');
         const numberOfLines = complexity.numberOfLines(file);

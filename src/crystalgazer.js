@@ -3,12 +3,10 @@
 const fs = require('fs');
 const path = require('path');
 const complexity = require('../src/complexityAnaliser.js');
-const gitInfo = require('../src/gitInfo.js');
+const gitInfo = require('../src/gitLog.js');
+const git = require('../src/git.js');
 
 let currentConfiguration = "";
-
-
-//TODO: git log interaction can be moved to another module
 
 //https://medium.com/@jakubsynowiec/unique-array-values-in-javascript-7c932682766c
 let getUniqueFilesFrom = function(source){
@@ -148,17 +146,23 @@ let groupFilesByName = function(files){
 };
 
 let getComplexityFor = function(commits, filePath){
-    // return commits.map(function(commit){
-    //     const file = git.getFileRevision(commit.hash, filePath);
-    //     const tabs = complexity.maxNumberOfTabs(file);
-    //     const lines = complexity.numberOfLines(file);
-    //     return {
-    //         hash: commit.hash,
-    //         date: commit.date,
-    //         maxNumberOfTabs: maxNumberOfTabs,
-    //         numberOfLines: numberOfLines
-    //     };
-    // });
+    return commits.map(function(commit){
+        const file = git.getFileOnCommit(filePath, '.', commit.hash); // we should always execute crystalGazer from the repo's root folder.
+
+        if (file && file.length > 0){
+            const tabs = complexity.maxNumberOfTabs(file);
+            const lines = complexity.numberOfLines(file);
+            return {
+                hash: commit.hash,
+                date: commit.date,
+                maxNumberOfTabs: tabs,
+                numberOfLines: lines
+            };
+        }
+        else{
+            return {};
+        }
+    });
 };
 
 let sortByNumberOfFiles = function(extensions){
