@@ -17,12 +17,12 @@ describe("Complexity tests", function(){
         };
         
         const fileName = "samples/Nancy.Demo.Authentication.Forms/MainModule.cs";
-        cg.complexityOverTime(fileName);
+        cg.complexityOverTime(cgConfig, fileName);
 
         expect(getFileOnCommit.callCount).to.equal(2);
     });
 
-    it("should get the complexity of the files", function(){
+    it("should get the complexity of the files", async function(){
         const cgConfig = {
             workingDirectory : "test/testRepo",
             name: "numCommits1"
@@ -33,8 +33,8 @@ describe("Complexity tests", function(){
 
         const fileName = "samples/Nancy.Demo.Authentication.Forms/MainModule.cs";
 
-        getFileOnCommit.withArgs(fileName, '.', 'c1d6a2c0acf324aa7f6c117593db6c7ab2628389').returns(aFile);
-        getFileOnCommit.withArgs(fileName, '.', 'c1d6a2c0acf324aa7f6c117593db6c7ab2628390').returns(anotherFile);
+        getFileOnCommit.withArgs(fileName, cgConfig.workingDirectory, 'c1d6a2c0acf324aa7f6c117593db6c7ab2628389').returns(aFile);
+        getFileOnCommit.withArgs(fileName, cgConfig.workingDirectory, 'c1d6a2c0acf324aa7f6c117593db6c7ab2628390').returns(anotherFile);
 
         const expected = [{
             hash: 'c1d6a2c0acf324aa7f6c117593db6c7ab2628389',
@@ -49,10 +49,9 @@ describe("Complexity tests", function(){
             numberOfLines: 48   
         }];
         
-        cg.init(cgConfig);
-        const result = cg.complexityOverTime(fileName);
-
-        expect(result).to.have.ordered.deep.members(expected);
+        return cg.complexityOverTime(cgConfig, fileName).then(function(result){
+            expect(result).to.have.ordered.deep.members(expected);
+        });        
     });
 
     afterEach(function() {

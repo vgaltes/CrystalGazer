@@ -32,8 +32,7 @@ function getFileOn(file, repository, commit){
 }
 
 module.exports = {
-    getFileOnCommit: async function(file, repository, commit){
-        let fileContents = await getFileOn(file, repository, commit);
-        return fileContents;
+    getFileOnCommit: function(file, repository, commit){
+        return getFileOn(file, repository, commit);
     }
 }

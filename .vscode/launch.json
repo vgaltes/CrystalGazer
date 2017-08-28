@@ -5,6 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "node",
+            "request": "launch",
+            "name": "Run init test in LambdaConf",
+            "program": "${workspaceRoot}/index.js",
+            "args": ["index.js", "init", "test", "-w", "../LambdaConf2016"]
+        },
+        {
             "name": "Run mocha",
             "type": "node",
             "request": "launch",

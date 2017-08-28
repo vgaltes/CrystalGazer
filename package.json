@@ -2,13 +2,13 @@
   "name": "crystalgazer",
   "version": "0.1.0",
   "description": "A command line utility to analyse a Git repository",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "mocha './test/{,!(testRepo)/**/}*.js' --recursive"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vgaltes/seer.git"
+    "url": "git+https://github.com/vgaltes/crystalgazer.git"
   },
   "keywords": [
     "git",
@@ -17,10 +17,11 @@
   "author": "Vicenç García Altés",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/vgaltes/seer/issues"
+    "url": "https://github.com/vgaltes/crystalgazer/issues"
   },
-  "homepage": "https://github.com/vgaltes/seer#readme",
+  "homepage": "https://github.com/vgaltes/crystalgazer#readme",
   "dependencies": {
+    "commander": "^2.11.0",
     "nodegit": "^0.20.1"
   },
   "devDependencies": {

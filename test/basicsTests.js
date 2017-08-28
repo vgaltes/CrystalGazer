@@ -12,8 +12,7 @@ describe("Basic operations", function(){
             name: 'numCommits1'
         };
 
-        cg.init(cgConfig);
-        var result = cg.numberOfCommits();
+        var result = cg.numberOfCommits(cgConfig);
 
         expect(result).to.equal(4);
     });
@@ -24,8 +23,7 @@ describe("Basic operations", function(){
             name: 'numCommits1'
         };
 
-        cg.init(cgConfig);
-        var result = cg.numberOfFilesChanged();
+        var result = cg.numberOfFilesChanged(cgConfig);
         
         expect(result).to.equal(21);
     });
@@ -41,8 +39,7 @@ describe("Basic operations", function(){
             name: 'numCommits1'
         };
 
-        cg.init(cgConfig);
-        var result = cg.filesByType();
+        var result = cg.filesByType(cgConfig);
 
         expect(result).to.have.ordered.deep.members(expected);
     });
@@ -55,8 +52,7 @@ describe("Basic operations", function(){
             name: 'numCommits1'
         };
 
-        cg.init(cgConfig);
-        var result = cg.authors();
+        var result = cg.authors(cgConfig);
 
         expect(result).to.have.ordered.members(expected);
     });
@@ -69,8 +65,7 @@ describe("Basic operations acceptance tests", function(){
             name: 'nancy'
         };
 
-        cg.init(cgConfig);
-        var result = cg.numberOfCommits();
+        var result = cg.numberOfCommits(cgConfig);
 
         expect(result).to.equal(5007);
     });
@@ -81,8 +76,7 @@ describe("Basic operations acceptance tests", function(){
             name: 'nancy'
         };
 
-        cg.init(cgConfig);
-        var result = cg.numberOfFilesChanged();
+        var result = cg.numberOfFilesChanged(cgConfig);
         
         expect(result).to.equal(18223);
     });
@@ -104,8 +98,7 @@ describe("Basic operations acceptance tests", function(){
             name: 'nancy'
         };
 
-        cg.init(cgConfig);
-        var result = cg.filesByType();
+        var result = cg.filesByType(cgConfig);
 
         expect(result).to.include.ordered.deep.members(expected);
     });
@@ -132,8 +125,7 @@ describe("Basic operations acceptance tests", function(){
             name: 'nancy'
         };
 
-        cg.init(cgConfig);
-        var result = cg.authors();
+        var result = cg.authors(cgConfig);
 
         expect(result).to.include.ordered.members(expected);
     });

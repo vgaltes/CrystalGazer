@@ -43,8 +43,7 @@ describe("Hotspot analysis", function(){
             }
         ];
 
-        cg.init(cgConfig);
-        let result = cg.revisionsByFile();
+        let result = cg.revisionsByFile(cgConfig);
 
         expect(result).to.include.ordered.deep.members(expected);
     });
@@ -69,8 +68,7 @@ describe("Hotspot analysis", function(){
                 lines: 25
             }];
 
-        cg.init(cgConfig);
-        let result = cg.linesByFile();
+        let result = cg.linesByFile(cgConfig);
 
         expect(result).to.have.ordered.deep.members(expected);
     });
@@ -112,12 +110,10 @@ describe("Hotspot analysis", function(){
             }
         ];
 
-        cg.init(cgConfig);
-        let result = cg.authorsByFile();
+        let result = cg.authorsByFile(cgConfig);
 
         expect(result).to.include.ordered.deep.members(expected);
     });
-
 });
 
 describe("Hotspot analysis acceptance tests", function(){
@@ -135,8 +131,7 @@ describe("Hotspot analysis acceptance tests", function(){
             {file: "src/Nancy/NancyEngine.cs", revisions: 113}
         ];
 
-        cg.init(cgConfig);
-        let result = cg.revisionsByFile();
+        let result = cg.revisionsByFile(cgConfig);
 
         expect(result).to.include.ordered.deep.members(expected);
     });
@@ -158,8 +153,7 @@ describe("Hotspot analysis acceptance tests", function(){
             }
         ];
 
-        cg.init(cgConfig);
-        let result = cg.linesByFile();
+        let result = cg.linesByFile(cgConfig);
 
         expect(result).to.have.ordered.deep.members(expected);
     });

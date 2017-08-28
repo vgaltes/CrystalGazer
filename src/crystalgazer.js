@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const complexity = require('../src/complexityAnaliser.js');
-const gitInfo = require('../src/gitLog.js');
+const gitLog = require('../src/gitLog.js');
 const git = require('../src/git.js');
 
 let currentConfiguration = "";
@@ -23,7 +23,7 @@ let getUniqueFilesFrom = function(source){
 };
 
 let getAllFilesFrom = function(commits){
-    return gitInfo.files();
+    return gitLog.files();
 };
 
 let getAllFilesWithCommitInformation = function(commits){
@@ -145,9 +145,9 @@ let groupFilesByName = function(files){
     }, []);
 };
 
-let getComplexityFor = function(commits, filePath){
-    return commits.map(function(commit){
-        const file = git.getFileOnCommit(filePath, '.', commit.hash); // we should always execute crystalGazer from the repo's root folder.
+let getComplexityFor = function(commits, filePath, workingDirectory){
+    const promises = commits.map(async function(commit){
+        const file = await git.getFileOnCommit(filePath, workingDirectory, commit.hash); 
 
         if (file && file.length > 0){
             const tabs = complexity.maxNumberOfTabs(file);
@@ -163,6 +163,8 @@ let getComplexityFor = function(commits, filePath){
             return {};
         }
     });
+
+    return Promise.all(promises);
 };
 
 let sortByNumberOfFiles = function(extensions){
@@ -187,51 +189,99 @@ let sortBy = function(list, sortFunction){
     });
 };
 
+let fileOrDirectoryExists = function(item){
+    try {
+        fs.statSync(item);
+        return true;
+    } catch(e) {
+        return false;
+    }
+}
+
+let checkIsRepositoryRootFolder = function(directory){
+    const gitFolder = path.join(directory, './.git');
+    if ( !fileOrDirectoryExists(gitFolder)){
+        throw 'Running Crystal Gazer in a folder that is not the root of a repository.';
+    }
+};
+
+let createLogIfItDoesntExist = function(configuration){
+    const cgFolder = path.join(configuration.workingDirectory, './.cg');
+    if(!fileOrDirectoryExists(cgFolder)){
+        fs.mkdirSync(cgFolder);
+    }
+
+    const filePath = path.join(cgFolder, configuration.name + '.log');
+    if(!fileOrDirectoryExists(filePath)){
+        gitLog.createLog(filePath, configuration.workingDirectory);
+    }
+
+    return filePath;
+};
+
+let resetConfiguration = function(configuration){
+    gitLog.allCommits = [];
+    currentConfiguration = configuration;
+}
+
 module.exports = {    
     init(configuration){
-        gitInfo.allCommits = [];
-        currentConfiguration = configuration;
-        const filePath = path.join(currentConfiguration.workingDirectory, './.cg', currentConfiguration.name + '.log');
+        checkIsRepositoryRootFolder(configuration.workingDirectory);
+        const filePath = createLogIfItDoesntExist(configuration);
+        resetConfiguration(configuration);
+        
         const fileContents = fs.readFileSync(filePath).toString();
+        gitLog.initFrom(fileContents);
+    },
+    numberOfCommits(configuration){
+        this.init(configuration);
+        return gitLog.commits().length;
+    },
+    numberOfFilesChanged(configuration){
+        this.init(configuration);
 
-        gitInfo.initFrom(fileContents);
-    },
-    numberOfCommits(){
-        return gitInfo.commits().length;
-    },
-    numberOfFilesChanged(){
-        return gitInfo.commits().reduce(function(numberOfFiles, commit){
+        return gitLog.commits().reduce(function(numberOfFiles, commit){
             return numberOfFiles + commit.files.length;
         }, 0);
     },
-    filesByType(){
-        const allFiles = gitInfo.files();
+    filesByType(configuration){
+        this.init(configuration);
+
+        const allFiles = gitLog.files();
         const uniqueFiles = getUniqueFilesFrom(allFiles);
         const unsortedResult = groupFilesByExtension(uniqueFiles);
         const result = sortByNumberOfFiles(unsortedResult);    
 
         return result;
     },
-    authors(){
-        return gitInfo.authors()
+    authors(configuration){
+        this.init(configuration);
+
+        return gitLog.authors()
     },
-    revisionsByFile(){
-        const allFiles = gitInfo.files();
+    revisionsByFile(configuration){
+        this.init(configuration);
+
+        const allFiles = gitLog.files();
         const timesCommited = groupFilesByName(allFiles);
         const result = sortByNumberOfRevisions(timesCommited);
 
         return result;
     },
-    linesByFile(){
-        const allFiles = gitInfo.files();
+    linesByFile(configuration){
+        this.init(configuration);
+
+        const allFiles = gitLog.files();
         const uniqueFiles = getUniqueFilesFrom(allFiles);
         const filesWithLines = getLinesFor(uniqueFiles);
         const result = sortByNumberOfLines(filesWithLines);
 
         return result;
     },
-    authorsByFile(){
-        const allFiles = getAllCommitsByFileFrom(gitInfo.commits());
+    authorsByFile(configuration){
+        this.init(configuration);
+
+        const allFiles = getAllCommitsByFileFrom(gitLog.commits());
         const sortedFiles = sortByNumberOfCommits(allFiles);
         const result = sortedFiles.map(function(element){
             return {
@@ -241,10 +291,10 @@ module.exports = {
         });
         return result;
     },
-    complexityOverTime(filePath){
-        const allCommitsForFile = getAllCommitsFor(gitInfo.commits(), filePath);
-        const complexity = getComplexityFor(allCommitsForFile, filePath);
+    complexityOverTime(configuration, filePath){
+        this.init(configuration);
 
-        return complexity;
+        const allCommitsForFile = getAllCommitsFor(gitLog.commits(), filePath);
+        return getComplexityFor(allCommitsForFile, filePath, configuration.workingDirectory);
     }
 };

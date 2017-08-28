@@ -1,5 +1,7 @@
 "use strict"
 
+const child_process = require('child_process');
+
 const commitRegex = /\[(.*)\],(.*)/;
 const fileDelimiter = "\n";
 const tab = "\t";
@@ -72,5 +74,12 @@ module.exports = {
         }, []);
     
         return allFiles;
+    },
+    createLog: function(file, workingDirectory){
+        const command = "git log --pretty=format:'[%H],%aN,%ad,%s' --date=local --numstat > " + file;
+
+        child_process.execSync(command,{
+            cwd: workingDirectory
+          });
     }
 }
