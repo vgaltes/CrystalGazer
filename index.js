@@ -101,7 +101,12 @@ let linesByFile = function(configName, options){
     const cgConfig = getConfigFrom(configName, options);    
     const linesByFile = cg.linesByFile(cgConfig);
 
-    console.log('linesByFile: ' + JSON.stringify(linesByFile));
+    const headers = ['File name', '# Lines'];
+    const data = linesByFile.map(function(item){
+        return [item.file, item.lines];
+    });
+
+    drawTwoColumnTable(headers, data);
 };
 
 let authorsByFile = function(configName, options){
