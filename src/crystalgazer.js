@@ -197,7 +197,7 @@ let fileOrDirectoryExists = function(item){
     } catch(e) {
         return false;
     }
-}
+};
 
 let checkIsRepositoryRootFolder = function(directory){
     const gitFolder = path.join(directory, './.git');
@@ -297,7 +297,6 @@ module.exports = {
 
         const allCommitsForFile = getAllCommitsFor(gitLog.commits(), filePath);
         return getComplexityFor(allCommitsForFile, filePath, configuration.workingDirectory).then(function(results){
-            // order by date
             return results.sort(function(c1, c2){
                 const date1 = dateFns.parse(c1.date);
                 const date2 = dateFns.parse(c2.date);
