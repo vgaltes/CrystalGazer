@@ -5,6 +5,7 @@ const path = require('path');
 const complexity = require('../src/complexityAnaliser.js');
 const gitLog = require('../src/gitLog.js');
 const git = require('../src/git.js');
+const dateFns = require('date-fns');
 
 let currentConfiguration = "";
 
@@ -295,6 +296,13 @@ module.exports = {
         this.init(configuration);
 
         const allCommitsForFile = getAllCommitsFor(gitLog.commits(), filePath);
-        return getComplexityFor(allCommitsForFile, filePath, configuration.workingDirectory);
+        return getComplexityFor(allCommitsForFile, filePath, configuration.workingDirectory).then(function(results){
+            // order by date
+            return results.sort(function(c1, c2){
+                const date1 = dateFns.parse(c1.date);
+                const date2 = dateFns.parse(c2.date);
+                return dateFns.compareAsc(date1, date2);
+            });
+        });
     }
 };

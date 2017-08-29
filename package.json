@@ -22,6 +22,7 @@
   "homepage": "https://github.com/vgaltes/crystalgazer#readme",
   "dependencies": {
     "commander": "^2.11.0",
+    "date-fns": "^1.28.5",
     "nodegit": "^0.20.1"
   },
   "devDependencies": {

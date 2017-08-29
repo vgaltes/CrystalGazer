@@ -37,17 +37,18 @@ describe("Complexity tests", function(){
         getFileOnCommit.withArgs(fileName, cgConfig.workingDirectory, 'c1d6a2c0acf324aa7f6c117593db6c7ab2628390').returns(anotherFile);
 
         const expected = [{
-            hash: 'c1d6a2c0acf324aa7f6c117593db6c7ab2628389',
-            date: 'Sat May 7 10:49:46 2016',
-            maxNumberOfTabs: 7,
-            numberOfLines: 78
-        },
-        {
             hash: 'c1d6a2c0acf324aa7f6c117593db6c7ab2628390',
             date: 'Fri May 6 10:49:47 2016',
             maxNumberOfTabs: 3,
             numberOfLines: 48   
-        }];
+        },
+        {
+            hash: 'c1d6a2c0acf324aa7f6c117593db6c7ab2628389',
+            date: 'Sat May 7 10:49:46 2016',
+            maxNumberOfTabs: 7,
+            numberOfLines: 78
+        }
+        ];
         
         return cg.complexityOverTime(cgConfig, fileName).then(function(result){
             expect(result).to.have.ordered.deep.members(expected);
