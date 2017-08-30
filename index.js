@@ -6,11 +6,11 @@ const pkg = require('./package.json');
 const dateFns = require('date-fns');
 const blessed = require('blessed');
 const contrib = require('blessed-contrib');
-const screen = blessed.screen();
+let screen;
 
-screen.key(['escape', 'q', 'C-c'], function(ch, key) {
-    return process.exit(0);
-});
+// screen.key(['escape', 'q', 'C-c'], function(ch, key) {
+//     return process.exit(0);
+// });
 
 let getConfigFrom = function(configName, options){
     let workingDirectory = '.';
@@ -28,6 +28,7 @@ let getConfigFrom = function(configName, options){
 };
 
 let drawTwoColumnTable = function(headers, data){
+    createScreen();
     const grid = new contrib.grid({rows: 1, cols: 1, screen: screen});
     const table = grid.set(0, 0, 1, 1,contrib.table,
         { keys: true
@@ -42,7 +43,6 @@ let drawTwoColumnTable = function(headers, data){
         , columnSpacing: 5 //in chars
         , columnWidth: [60, 20] /*in chars*/ });
 
-   
     //allow control the table with the keyboard
     table.focus();
    
@@ -54,6 +54,8 @@ let drawTwoColumnTable = function(headers, data){
 };
 
 let drawText = function(label, text){
+    createScreen();
+
     const grid = new contrib.grid({rows: 1, cols: 1, screen: screen});
     const box = grid.set(0, 0, 1, 1,blessed.box,
         {   
@@ -77,6 +79,13 @@ let drawText = function(label, text){
     screen.render();
 };
 
+let createScreen = function(){
+    screen = blessed.screen();
+    screen.key(['escape', 'q', 'C-c'], function(ch, key) {
+        return process.exit(0);
+    });
+};
+
 let init = function(configName, options){
     const cgConfig = getConfigFrom(configName, options);
     cg.init(cgConfig);
@@ -84,7 +93,6 @@ let init = function(configName, options){
 
 let numberOfCommits = function(configName, options){
     const cgConfig = getConfigFrom(configName, options);
-    console.log(cgConfig);
     const numberOfCommits = cg.numberOfCommits(cgConfig);
 
     drawText('Number of commits (Press ESC to exit)', numberOfCommits.toString());
@@ -176,6 +184,7 @@ let addLineChartTo = function(grid, xpos, ypos, label, series){
 let complexityOverTime = function(configName, fileName, options){
     const cgConfig = getConfigFrom(configName, options);    
     cg.complexityOverTime(cgConfig, fileName).then(function(complexity){
+        createScreen();
         const grid = new contrib.grid({rows: 2, cols: 1, screen: screen});
         
         var linesSeries = {
@@ -203,7 +212,7 @@ let complexityOverTime = function(configName, fileName, options){
 
 let coupling = function(configName, options){
     const cgConfig = getConfigFrom(configName, options);
-    const coupling = cg.coupling(cgConfig);//.splice(0,10);
+    const coupling = cg.coupling(cgConfig);
 
     const text = coupling.reduce(function(acc, element)
     {
