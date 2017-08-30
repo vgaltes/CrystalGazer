@@ -25,6 +25,7 @@
     "blessed-contrib": "^4.8.5",
     "commander": "^2.11.0",
     "date-fns": "^1.28.5",
+    "js-combinatorics": "^0.5.2",
     "nodegit": "^0.20.1"
   },
   "devDependencies": {

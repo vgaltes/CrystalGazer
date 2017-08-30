@@ -6,6 +6,7 @@ const complexity = require('../src/complexityAnaliser.js');
 const gitLog = require('../src/gitLog.js');
 const git = require('../src/git.js');
 const dateFns = require('date-fns');
+const combinatorics = require('js-combinatorics');
 
 let currentConfiguration = "";
 
@@ -223,6 +224,60 @@ let createLogIfItDoesntExist = function(configuration){
 let resetConfiguration = function(configuration){
     gitLog.allCommits = [];
     currentConfiguration = configuration;
+};
+
+let getCombinations = function(files){
+    const baseCombinations = combinatorics.combination(files, 2);
+    let combinations = [];
+    var combination;
+    while(combination = baseCombinations.next()){
+        combinations.push(combination);
+        combinations.push([combination[1], combination[0]]);
+    }
+
+    return combinations;
+};
+
+let getCouplings = function(configuration){
+    const allFiles = gitLog.files();
+    const timesCommited = groupFilesByName(allFiles);
+    //const timesCommitedSorted = sortByNumberOfRevisions(timesCommited);
+
+    let couplings = [];
+
+    for(var commit of gitLog.commits()){
+        if ( commit.files.length > 1 ){
+            try{
+            const combinations = getCombinations(commit.files);
+            for(var combination of combinations){
+                const index = couplings.findIndex(function(element){
+                    return element.file1 === combination[0].path 
+                        && element.file2 === combination[1].path;
+                });
+
+                if(index === -1){
+                    couplings.push({file1: combination[0].path, file2:combination[1].path, times: 1})
+                }
+                else{
+                    couplings[index].times++;
+                }
+
+            }
+        }catch(e){
+           let a = 0; 
+        }
+        }
+    }
+
+    return couplings.map(function(item){
+        const timesFileWasCommited = timesCommited.find(function(element){
+            return element.file === item.file1;
+        }).revisions;
+
+        return {file1: item.file1, file2: item.file2, coupling: item.times * 100.0 / timesFileWasCommited};
+    }).sort(function(item1, item2){
+        return item2.coupling - item1.coupling;
+    });
 }
 
 module.exports = {    
@@ -303,5 +358,13 @@ module.exports = {
                 return dateFns.compareAsc(date1, date2);
             });
         });
+    },
+    coupling(configuration){
+        this.init(configuration);
+
+        return getCouplings();
+
+        
+
     }
 };
