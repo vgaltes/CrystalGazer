@@ -223,7 +223,12 @@ let createLogIfItDoesntExist = function(configuration){
         gitLog.createLog(filePath, configuration.workingDirectory);
     }
 
-    return filePath;
+    const invalidExtensionsFilePath = path.join(cgFolder, configuration.name + '.ignore');
+    if(!fileOrDirectoryExists(invalidExtensionsFilePath)){
+        fs.closeSync(fs.openSync(invalidExtensionsFilePath, 'w'));
+    }
+
+    return { logFile: filePath, ignoreFile: invalidExtensionsFilePath};
 };
 
 let resetConfiguration = function(configuration){
@@ -246,13 +251,10 @@ let getCombinations = function(files){
 let getCouplings = function(configuration){
     const allFiles = gitLog.files();
     const timesCommited = groupFilesByName(allFiles);
-    //const timesCommitedSorted = sortByNumberOfRevisions(timesCommited);
-
     let couplings = [];
 
     for(var commit of gitLog.commits()){
         if ( commit.files.length > 1 ){
-            try{
             const combinations = getCombinations(commit.files);
             for(var combination of combinations){
                 const index = couplings.findIndex(function(element){
@@ -268,9 +270,6 @@ let getCouplings = function(configuration){
                 }
 
             }
-        }catch(e){
-           let a = 0; 
-        }
         }
     }
 
@@ -288,11 +287,12 @@ let getCouplings = function(configuration){
 module.exports = {    
     init(configuration){
         checkIsRepositoryRootFolder(configuration.workingDirectory);
-        const filePath = createLogIfItDoesntExist(configuration);
+        const paths = createLogIfItDoesntExist(configuration);
         resetConfiguration(configuration);
         
-        const fileContents = fs.readFileSync(filePath).toString();
-        gitLog.initFrom(fileContents);
+        const logFileContents = fs.readFileSync(paths.logFile).toString();
+        const ignoreFileContents = fs.readFileSync(paths.ignoreFile).toString();
+        gitLog.initFrom(logFileContents, ignoreFileContents);
     },
     numberOfCommits(configuration){
         this.init(configuration);

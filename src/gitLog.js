@@ -1,9 +1,11 @@
 "use strict"
 
 const child_process = require('child_process');
+const path = require('path');
 
 const commitRegex = /\[(.*)\],(.*)/;
-const fileDelimiter = "\n";
+const newLine = "\n";
+const fileDelimiter = newLine;
 const tab = "\t";
 const carrierReturn = "\r";
 const invalidFileLines = ["\n", "", "\r"];
@@ -14,15 +16,28 @@ let commitDelimiter = function (element){
     return element.startsWith("\n") || element.startsWith("\r\n");
 };
 
-let getCommitFrom = function(lines){
+let getExtension = function(fileName){
+    let extension = path.extname(fileName).substr(1);
+    if(extension === '' && fileName.indexOf('.') !== -1){
+        extension = fileName;
+    }
+
+    return extension;
+};
+
+let getCommitFrom = function(lines, invalidExtensions){
     let commitInfo = lines[1].split(',');
     let comment = commitInfo.splice(2).join();
 
     let rawFiles = lines[2].split(fileDelimiter);
-    let validFiles = rawFiles.filter(function(element){
+    let files = rawFiles.filter(function(element){
         return invalidFileLines.indexOf(element) === -1;
+    }).filter(function(element){
+        const extension = getExtension(element);
+        return invalidExtensions.indexOf(extension) === -1;
     });
-    let files = validFiles.map(function(element){
+
+    let validFiles = files.map(function(element){
         let rawFile = element.replace(carrierReturn, "");
         let fileInfo = rawFile.split(tab);
         return {
@@ -37,25 +52,29 @@ let getCommitFrom = function(lines){
         author: commitInfo[0],
         date: commitInfo[1],
         comment: comment,
-        files: files
+        files: validFiles
     }
 };
 
-let getCommitsInfoFrom = function getCommitsInfoFrom (lines, commits){
+let getCommitsInfoFrom = function getCommitsInfoFrom (lines, commits, invalidExtensions){
     let indexEndFirstGroup = lines.findIndex(commitDelimiter);
     
     if ( indexEndFirstGroup !== -1 ){
         let remainingLines = lines.splice(indexEndFirstGroup + 1);
-        commits.push(getCommitFrom(lines));
-        getCommitsInfoFrom(remainingLines, commits);
+        commits.push(getCommitFrom(lines, invalidExtensions));
+        getCommitsInfoFrom(remainingLines, commits, invalidExtensions);
     }
 }
 
 module.exports = {
-    initFrom : function(logFileContents){
+    initFrom : function(logFileContents, invalidExtensionsContents){
         allCommits = [];
         const allRawCommits = logFileContents.split(commitRegex).splice(1);
-        getCommitsInfoFrom(allRawCommits, allCommits);
+        let invalidExtensions = [];
+        if ( invalidExtensionsContents ){
+            invalidExtensions = invalidExtensionsContents.split(newLine);
+        }
+        getCommitsInfoFrom(allRawCommits, allCommits, invalidExtensions);
     },
     commits : function(){
         return allCommits.slice();

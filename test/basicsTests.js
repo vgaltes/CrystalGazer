@@ -14,7 +14,7 @@ describe("Basic operations", function(){
 
         var result = cg.numberOfCommits(cgConfig);
 
-        expect(result).to.equal(4);
+        expect(result).to.equal(5);
     });
 
     it("should get the number of files changed", function(){
