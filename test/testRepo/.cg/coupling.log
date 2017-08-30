@@ -1,0 +1,24 @@
+[4d9c30e276d68424be67e8fc863b87730047683e],Jonathan Channon,Thu May 19 13:06:54 2016,Merge pull request #2441 from thecodejunkie/update-route-syntax
+3	3	src/file1.js
+3	3	src/file2.js
+
+[d33b630f676bdc1a25f8e101be999b50258a49f8],Andreas Hakansson,Wed May 18 12:30:51 2016,Merge pull request #2443 from khellang/respect-allow-empty-strings
+3	3	src/file1.js
+3	3	src/file3.js
+
+[c1d6a2c0acf324aa7f6c117593db6c7ab2628389],Andreas Hakansson,Sat May 7 10:49:46 2016,Introduced new route declaration syntax
+3	3	src/file4.js
+
+[c1d6a2c0acf324aa7f6c117593db6c7ab2628390],Jonathan Channon,Fri May 6 10:49:47 2016,Introduced new route declaration syntax again
+3	3	src/file1.js
+
+[c1d6a2c0acf324aa7f6c117593db6c7ab2628391],Jonathan Channon,Fri May 5 10:49:47 2016,Introduced new route declaration syntax again
+3	3	src/file1.js
+3	3	src/file2.js
+
+[c1d6a2c0acf324aa7f6c117593db6c7ab2628392],Jonathan Channon,Fri May 5 10:49:47 2016,Introduced new route declaration syntax again
+3	3	src/file1.js
+
+[c1d6a2c0acf324aa7f6c117593db6c7ab2628393],Jonathan Channon,Fri May 4 10:49:47 2016,Introduced new route declaration syntax again
+3	3	src/file2.js
+3	3	src/file3.js
