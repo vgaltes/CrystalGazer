@@ -116,7 +116,12 @@ let getLinesFor = function(files){
 
 let groupFilesByExtension = function(uniqueFiles){
     return uniqueFiles.reduce(function(acc, item) {  
-        const extension = path.extname(item).substr(1);
+        const fileName = path.basename(item);
+        let extension = path.extname(fileName).substr(1);
+        if(extension === '' && fileName.indexOf('.') !== -1){
+            extension = fileName;
+        }
+        
         const index = acc.findIndex(function(element){
             return element.extension === extension;
         });

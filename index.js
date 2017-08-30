@@ -53,6 +53,30 @@ let drawTwoColumnTable = function(headers, data){
     screen.render();
 };
 
+let drawText = function(label, text){
+    const grid = new contrib.grid({rows: 1, cols: 1, screen: screen});
+    const box = grid.set(0, 0, 1, 1,blessed.box,
+        {   
+            label: label,
+            width: '80%',
+            height: '90%',
+            border: 'line',
+            content: text,
+            scrollable: true,
+            keys: true,
+            vi: true,
+            alwaysScroll: true,
+            scrollbar: {
+              ch: ' ',
+              inverse: true
+            }
+        });
+    
+    box.focus();
+
+    screen.render();
+};
+
 let init = function(configName, options){
     const cgConfig = getConfigFrom(configName, options);
     cg.init(cgConfig);
@@ -63,28 +87,38 @@ let numberOfCommits = function(configName, options){
     console.log(cgConfig);
     const numberOfCommits = cg.numberOfCommits(cgConfig);
 
-    console.log('Number of commits: ' + numberOfCommits);
+    drawText('Number of commits (Press ESC to exit)', numberOfCommits.toString());
 };
 
 let numberOfFilesChanged = function(configName, options){
     const cgConfig = getConfigFrom(configName, options);    
     const numberOfFilesChanged = cg.numberOfFilesChanged(cgConfig);
 
-    console.log('numberOfFilesChanged: ' + numberOfFilesChanged);
+    drawText('Number of files changed (Press ESC to exit)', numberOfFilesChanged.toString());
 };
 
 let filesByType = function(configName, options){
     const cgConfig = getConfigFrom(configName, options);    
     const filesByType = cg.filesByType(cgConfig);
 
-    console.log('filesByType: ' + JSON.stringify(filesByType));
+    const text = filesByType.reduce(function(acc, element)
+    {
+        return acc + element.extension + " ==> " + element.files + "\n";
+    }, "");
+
+    drawText('Files by type (Press ESC to exit)', text);
 };
 
 let authors = function(configName, options){
     const cgConfig = getConfigFrom(configName, options);    
     const authors = cg.authors(cgConfig);
 
-    console.log('authors: ' + authors);
+    const text = authors.reduce(function(acc, element)
+    {
+        return acc + element + "\n";
+    }, "");
+
+    drawText('Authors (Press ESC to exit)', text);
 };
 
 let revisionsByFile = function(configName, options){
@@ -138,6 +172,7 @@ let addLineChartTo = function(grid, xpos, ypos, label, series){
         line.setData([series]);
 }
 
+
 let complexityOverTime = function(configName, fileName, options){
     const cgConfig = getConfigFrom(configName, options);    
     cg.complexityOverTime(cgConfig, fileName).then(function(complexity){
@@ -164,6 +199,18 @@ let complexityOverTime = function(configName, fileName, options){
         addLineChartTo(grid, 1, 0, 'Complexity (max # of tabs) over time (Press ESC to exit)',tabsSeries);
         screen.render();
     });    
+};
+
+let coupling = function(configName, options){
+    const cgConfig = getConfigFrom(configName, options);
+    const coupling = cg.coupling(cgConfig);//.splice(0,10);
+
+    const text = coupling.reduce(function(acc, element)
+    {
+        return acc + element.file1 + ' ==> ' + element.file2 + ': ' + element.coupling + "\n";
+    }, "");
+
+    drawText('Coupling (Press ESC to exit)', text);
 };
 
 program
@@ -211,6 +258,11 @@ program
     .command('complexityOverTime <configName> <fileName>')
     .option('-w, --workingDirectory <working_directory>', 'working directory')
     .action(complexityOverTime); 
+
+program
+    .command('coupling <configName>')
+    .option('-w, --workingDirectory <working_directory>', 'working directory')
+    .action(coupling); 
 
 program.parse(process.argv);
 
