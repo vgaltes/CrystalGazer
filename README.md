@@ -36,6 +36,9 @@ This will create a folder called .cg in your repo. Make sure to add it into your
 ## Ignoring files
 You'll probably want to exclude some files from the study. You can exclude files with a certain extension using the <configuration_name>.ignore file inside the .cg folder. You just need to add a line for each extension you want to exclude (just the extension, without the point);
 
+## Mapping authors
+Sometimes we can find the same person with different names in the git log file. You can setup a mapping between authors names using the <configuration_name>.authors file inside the .cg folder. You just need to add a line for each map you want to define. The line has to have the format `original_name->replacement_name` (without any space between the names and the arrow).
+
 ## Available commands
 
 A part from the init command we've just explained you can run the following commands:
