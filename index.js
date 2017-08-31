@@ -209,7 +209,12 @@ let complexityOverTime = function(configName, fileName, options){
 
 let coupling = function(configName, options){
     const cgConfig = getConfigFrom(configName, options);
-    const coupling = cg.coupling(cgConfig).splice(0, 40);
+    let numberOfItemsToDisplay = 40;
+
+    if ( options.numberOfItems ){
+        numberOfItemsToDisplay = options.numberOfItems;
+    }
+    const coupling = cg.coupling(cgConfig).splice(0, numberOfItemsToDisplay);
 
     const text = coupling.reduce(function(acc, element)
     {
@@ -268,6 +273,7 @@ program
 program
     .command('coupling <configName>')
     .option('-w, --workingDirectory <working_directory>', 'working directory')
+    .option('-n, --numberOfItems <numItems>', 'number of items to display')
     .action(coupling); 
 
 program.parse(process.argv);
