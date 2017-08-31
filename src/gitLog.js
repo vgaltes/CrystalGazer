@@ -57,14 +57,16 @@ let getCommitFrom = function(lines, invalidExtensions){
 };
 
 let getCommitsInfoFrom = function getCommitsInfoFrom (lines, commits, invalidExtensions){
-
-    // convert to loop
     let indexEndFirstGroup = lines.findIndex(commitDelimiter);
-    
-    if ( indexEndFirstGroup !== -1 ){
-        let remainingLines = lines.splice(indexEndFirstGroup + 1);
-        commits.push(getCommitFrom(lines, invalidExtensions));
-        getCommitsInfoFrom(remainingLines, commits, invalidExtensions);
+    let remainingLines = lines;
+
+    while (indexEndFirstGroup !== -1){
+        let remaining = lines.splice(indexEndFirstGroup + 1);
+        if ( lines.length > 0){
+            commits.push(getCommitFrom(lines, invalidExtensions));
+            lines = remaining;
+            indexEndFirstGroup = lines.findIndex(commitDelimiter);
+        }
     }
 }
 
