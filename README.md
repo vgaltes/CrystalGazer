@@ -3,7 +3,7 @@
 
 Crystal Gazer is an application to gather social information about your code. With Crystal Gazer you'll be able to detect hidden dependencies, plan your next refactor or fight against the Conway's law.
 
-Crystal Gazer is based on the work of [Adam Tornhil](https://twitter.com/AdamTornhill). So please, buy his [book](https://www.amazon.co.uk/Your-Code-Crime-Scene-Bottlenecks/dp/1680500384), check his software forensics [online tool](https://codescene.io/) and check [Code Maat](https://github.com/adamtornhill/code-maat), the tool that Crstal Gazer is inspired in.
+Crystal Gazer is based on [Adam Tornhil](https://twitter.com/AdamTornhill)'s work. So please, buy his [book](https://www.amazon.co.uk/Your-Code-Crime-Scene-Bottlenecks/dp/1680500384), check his software forensics [online tool](https://codescene.io/) and check [Code Maat](https://github.com/adamtornhill/code-maat), the tool that Crstal Gazer is inspired in.
 
 
 ## How it works
@@ -26,8 +26,8 @@ In order to create the files needed for Crystal Gazer to work you can run the fo
 crystalgazer init test -w "./RepoFolder"
 ```
 where:
-    - test: is the name of the configuration. You can create different configurations for the same repository.
-    - '-w "./RepoFolder": it's an optional parameter that indicates the working folder. Use it if you are running Crystal Gazer from the outside of your repo root folder.
+- test: is the name of the configuration. You can create different configurations for the same repository.
+- '-w "./RepoFolder": it's an optional parameter that indicates the working folder. Use it if you are running Crystal Gazer from the outside of your repo root folder.
 
 You don't need to explicitly call the init command. Every Crystal Gazer command calls it internally.
 
@@ -47,8 +47,8 @@ crystalgazer numberOfCommits test -w "./RepoFolder"
 ```
 
 where:
-    - test: is the name of the configuration.
-    - '-w "./RepoFolder": it's an optional parameter that indicates the working folder.
+- test: is the name of the configuration.
+- '-w "./RepoFolder": it's an optional parameter that indicates the working folder.
 
 This will show you the number of commits you've made to the repository.
 
@@ -59,8 +59,8 @@ crystalgazer numberOfFilesChanged test -w "./RepoFolder"
 ```
 
 where:
-    - test: is the name of the configuration.
-    - '-w "./RepoFolder": it's an optional parameter that indicates the working folder.
+- test: is the name of the configuration.
+- '-w "./RepoFolder": it's an optional parameter that indicates the working folder.
 
 This will show you the number of changes that have been committed. For example, if you have two commits with the same two files committed in both commits, the number of files changed will be 4.
 
@@ -71,8 +71,8 @@ crystalgazer filesByType test -w "./RepoFolder"
 ```
 
 where:
-    - test: is the name of the configuration.
-    - '-w "./RepoFolder": it's an optional parameter that indicates the working folder.
+- test: is the name of the configuration.
+- '-w "./RepoFolder": it's an optional parameter that indicates the working folder.
 
 This will show you a list of extensions with the number of files that exist (or existed) with that extension. It doesn't reflect the current state of the repo, but the whole story. So, if you commited a file named aFile.js and you deleted it later, that file will count in the files with js extension.
 
@@ -83,8 +83,8 @@ crystalgazer authors test -w "./RepoFolder"
 ```
 
 where:
-    - test: is the name of the configuration.
-    - '-w "./RepoFolder": it's an optional parameter that indicates the working folder.
+- test: is the name of the configuration.
+- '-w "./RepoFolder": it's an optional parameter that indicates the working folder.
 
 This will show you a list of the people that has committed something to the repo.
 
@@ -95,8 +95,8 @@ crystalgazer revisionsByFile test -w "./RepoFolder"
 ```
 
 where:
-    - test: is the name of the configuration.
-    - '-w "./RepoFolder": it's an optional parameter that indicates the working folder.
+- test: is the name of the configuration.
+- '-w "./RepoFolder": it's an optional parameter that indicates the working folder.
 
 This will show you an ordered list of the files with more revisions. You'll be able to spot the files with more chances to have bugs.
 
@@ -107,8 +107,8 @@ crystalgazer linesByFile test -w "./RepoFolder"
 ```
 
 where:
-    - test: is the name of the configuration.
-    - '-w "./RepoFolder": it's an optional parameter that indicates the working folder.
+- test: is the name of the configuration.
+- '-w "./RepoFolder": it's an optional parameter that indicates the working folder.
 
 This will show you an ordered list of the files with more lines. The bigger the file, the bigger the chances to have a bug and/or to deserve a refactoring.
 
@@ -119,8 +119,8 @@ crystalgazer authorsByFile test -w "./RepoFolder"
 ```
 
 where:
-    - test: is the name of the configuration.
-    - '-w "./RepoFolder": it's an optional parameter that indicates the working folder.
+- test: is the name of the configuration.
+- '-w "./RepoFolder": it's an optional parameter that indicates the working folder.
 
 This will show you an ordered list of the files with more authors. The bigger the number of people contributing to a file, the bigger the chances to have a bug and/or to deserve a refactoring.
 
@@ -131,9 +131,9 @@ crystalgazer complexityOverTime test "src/a/folder/aFile.cs" -w "./RepoFolder"
 ```
 
 where:
-    - test: is the name of the configuration.
-    - "src/a/folder/aFile.cs": the path of the file we want to study.
-    - '-w "./RepoFolder": it's an optional parameter that indicates the working folder.
+- test: is the name of the configuration.
+- "src/a/folder/aFile.cs": the path of the file we want to study.
+- '-w "./RepoFolder": it's an optional parameter that indicates the working folder.
 
 This will show you two line charts with the evolution of the number of lines and the maximum number of tabs of a given file.
 
@@ -144,7 +144,7 @@ crystalgazer coupling test -w "./RepoFolder"
 ```
 
 where:
-    - test: is the name of the configuration.
-    - '-w "./RepoFolder": it's an optional parameter that indicates the working folder.
+- test: is the name of the configuration.
+- '-w "./RepoFolder": it's an optional parameter that indicates the working folder.
 
 This will show you an ordered list of the files that have been committed together more times. You'll be able to spot hidden dependencies. We're displaying 40 elements.
