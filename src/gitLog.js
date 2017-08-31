@@ -25,7 +25,15 @@ let getExtension = function(fileName){
     return extension;
 };
 
-let getCommitFrom = function(lines, invalidExtensions){
+let replaceAuthor = function(authorName, authorsMappings){
+    const index = authorsMappings.findIndex(function(element){
+        return element.original === authorName;
+    });
+
+    return index === -1 ? authorName : authorsMappings[index].replacement;
+};
+
+let getCommitFrom = function(lines, invalidExtensions, authorsMappings){
     let commitInfo = lines[1].split(',');
     let comment = commitInfo.splice(2).join();
 
@@ -49,36 +57,57 @@ let getCommitFrom = function(lines, invalidExtensions){
 
     return {
         hash: lines[0],
-        author: commitInfo[0],
+        author: replaceAuthor(commitInfo[0], authorsMappings),
         date: commitInfo[1],
         comment: comment,
         files: validFiles
     }
 };
 
-let getCommitsInfoFrom = function getCommitsInfoFrom (lines, commits, invalidExtensions){
+let getCommitsInfoFrom = function getCommitsInfoFrom (lines, commits, invalidExtensions, authorsMappings){
     let indexEndFirstGroup = lines.findIndex(commitDelimiter);
     let remainingLines = lines;
 
     while (indexEndFirstGroup !== -1){
         let remaining = lines.splice(indexEndFirstGroup + 1);
         if ( lines.length > 0){
-            commits.push(getCommitFrom(lines, invalidExtensions));
+            commits.push(getCommitFrom(lines, invalidExtensions, authorsMappings));
             lines = remaining;
             indexEndFirstGroup = lines.findIndex(commitDelimiter);
         }
     }
 }
 
+let getInvalidExtensionsFrom = function(invalidExtensionsContents){
+    let invalidExtensions = [];
+    if ( invalidExtensionsContents ){
+        invalidExtensions = invalidExtensionsContents.split(newLine);
+    }
+
+    return invalidExtensions;
+};
+
+let getAuthorsMappingFrom = function(authorsContents){
+    let authorsMapping = [];
+    if ( authorsContents ){
+        let authors = authorsContents.split(newLine);
+        for(var author of authors){
+            const authorMapping = author.split("->");
+            authorsMapping.push({original: authorMapping[0], replacement: authorMapping[1]});
+        }        
+    }
+
+    return authorsMapping;
+};
+
 module.exports = {
-    initFrom : function(logFileContents, invalidExtensionsContents){
+    initFrom : function(logFileContents, invalidExtensionsContents, authorsFileContents){
         allCommits = [];
         const allRawCommits = logFileContents.split(commitRegex).splice(1);
-        let invalidExtensions = [];
-        if ( invalidExtensionsContents ){
-            invalidExtensions = invalidExtensionsContents.split(newLine);
-        }
-        getCommitsInfoFrom(allRawCommits, allCommits, invalidExtensions);
+        let invalidExtensions = getInvalidExtensionsFrom(invalidExtensionsContents);
+        let authorsMappings = getAuthorsMappingFrom(authorsFileContents);
+
+        getCommitsInfoFrom(allRawCommits, allCommits, invalidExtensions, authorsMappings);
     },
     commits : function(){
         return allCommits.slice();

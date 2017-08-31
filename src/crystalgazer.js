@@ -212,6 +212,12 @@ let checkIsRepositoryRootFolder = function(directory){
     }
 };
 
+let createFileIfItDoesntExist = function(filePath){
+    if(!fileOrDirectoryExists(filePath)){
+        fs.closeSync(fs.openSync(filePath, 'w'));
+    }
+};
+
 let createLogIfItDoesntExist = function(configuration){
     const cgFolder = path.join(configuration.workingDirectory, './.cg');
     if(!fileOrDirectoryExists(cgFolder)){
@@ -224,11 +230,12 @@ let createLogIfItDoesntExist = function(configuration){
     }
 
     const invalidExtensionsFilePath = path.join(cgFolder, configuration.name + '.ignore');
-    if(!fileOrDirectoryExists(invalidExtensionsFilePath)){
-        fs.closeSync(fs.openSync(invalidExtensionsFilePath, 'w'));
-    }
+    createFileIfItDoesntExist(invalidExtensionsFilePath);
 
-    return { logFile: filePath, ignoreFile: invalidExtensionsFilePath};
+    const authorsFilePath = path.join(cgFolder, configuration.name + '.authors');
+    createFileIfItDoesntExist(authorsFilePath);
+
+    return { logFile: filePath, ignoreFile: invalidExtensionsFilePath, authorsFile: authorsFilePath};
 };
 
 let resetConfiguration = function(configuration){
@@ -292,7 +299,8 @@ module.exports = {
         
         const logFileContents = fs.readFileSync(paths.logFile).toString();
         const ignoreFileContents = fs.readFileSync(paths.ignoreFile).toString();
-        gitLog.initFrom(logFileContents, ignoreFileContents);
+        const authorsFileContents = fs.readFileSync(paths.authorsFile).toString();
+        gitLog.initFrom(logFileContents, ignoreFileContents, authorsFileContents);
     },
     numberOfCommits(configuration){
         this.init(configuration);

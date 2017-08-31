@@ -45,7 +45,7 @@ describe("Basic operations", function(){
     });
 
     it("should get authors", function(){
-        var expected = ["Jonathan Channon", "Andreas Hakansson"];
+        var expected = ["John Smith", "Vicenc Garcia"];
 
         var cgConfig = {
             workingDirectory: "test/testRepo",
