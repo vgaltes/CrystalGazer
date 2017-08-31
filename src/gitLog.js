@@ -57,6 +57,8 @@ let getCommitFrom = function(lines, invalidExtensions){
 };
 
 let getCommitsInfoFrom = function getCommitsInfoFrom (lines, commits, invalidExtensions){
+
+    // convert to loop
     let indexEndFirstGroup = lines.findIndex(commitDelimiter);
     
     if ( indexEndFirstGroup !== -1 ){

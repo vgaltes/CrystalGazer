@@ -1,8 +1,8 @@
 {
   "name": "crystalgazer",
-  "version": "0.1.0",
+  "version": "0.1.3",
   "description": "A command line utility to analyse a Git repository",
-  "main": "src/index.js",
+  "main": "index.js",
   "scripts": {
     "test": "mocha './test/{,!(testRepo)/**/}*.js' --recursive"
   },
@@ -18,6 +18,10 @@
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/vgaltes/crystalgazer/issues"
+  },
+  "bin": {
+    "crystalgazer": "./index.js",
+    "cg": "./index.js"
   },
   "homepage": "https://github.com/vgaltes/crystalgazer#readme",
   "dependencies": {

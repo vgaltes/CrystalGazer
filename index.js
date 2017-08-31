@@ -1,3 +1,4 @@
+#! /usr/bin/env node
 "use strict"
 
 const program = require('commander');
@@ -7,10 +8,6 @@ const dateFns = require('date-fns');
 const blessed = require('blessed');
 const contrib = require('blessed-contrib');
 let screen;
-
-// screen.key(['escape', 'q', 'C-c'], function(ch, key) {
-//     return process.exit(0);
-// });
 
 let getConfigFrom = function(configName, options){
     let workingDirectory = '.';
@@ -212,7 +209,7 @@ let complexityOverTime = function(configName, fileName, options){
 
 let coupling = function(configName, options){
     const cgConfig = getConfigFrom(configName, options);
-    const coupling = cg.coupling(cgConfig);
+    const coupling = cg.coupling(cgConfig).splice(0, 40);
 
     const text = coupling.reduce(function(acc, element)
     {
