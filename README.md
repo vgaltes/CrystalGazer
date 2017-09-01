@@ -1,5 +1,6 @@
 # Crystal Gazer
 ![Travis](https://travis-ci.org/vgaltes/CrystalGlazer.svg?branch=master)
+[![NPM](https://nodei.co/npm/crystalgazer.png)](https://nodei.co/npm/crystalgazer/)
 
 Crystal Gazer is an application to gather social information about your code. With Crystal Gazer you'll be able to detect hidden dependencies, plan your next refactor or fight against the Conway's law.
 
