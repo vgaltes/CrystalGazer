@@ -276,6 +276,8 @@ program
     .option('-n, --numberOfItems <numItems>', 'number of items to display')
     .action(coupling); 
 
+program.action(function(){program.outputHelp();});
+
 program.parse(process.argv);
 
 // if program was called with no arguments, show help.
