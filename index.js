@@ -209,12 +209,11 @@ let complexityOverTime = function(configName, fileName, options){
 
 let coupling = function(configName, options){
     const cgConfig = getConfigFrom(configName, options);
-    let numberOfItemsToDisplay = 40;
 
-    if ( options.numberOfItems ){
-        numberOfItemsToDisplay = options.numberOfItems;
-    }
-    const coupling = cg.coupling(cgConfig).splice(0, numberOfItemsToDisplay);
+    const numberOfItemsToDisplay = options.numberOfItems || 40;
+    const threshold = options.threshold || 1;
+    
+    const coupling = cg.coupling(cgConfig, threshold).splice(0, numberOfItemsToDisplay);
 
     const text = coupling.reduce(function(acc, element)
     {
@@ -274,6 +273,7 @@ program
     .command('coupling <configName>')
     .option('-w, --workingDirectory <working_directory>', 'working directory')
     .option('-n, --numberOfItems <numItems>', 'number of items to display')
+    .option('-t, --threshold <threshold>', 'minimum number of commits')
     .action(coupling); 
 
 program.action(function(){program.outputHelp();});

@@ -1,6 +1,6 @@
 {
   "name": "crystalgazer",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A command line utility to analyse a Git repository",
   "main": "index.js",
   "scripts": {

@@ -255,14 +255,26 @@ let getCombinations = function(files){
     return combinations;
 };
 
-let getCouplings = function(configuration){
+let getCouplings = function(threshold){
     const allFiles = gitLog.files();
-    const timesCommited = groupFilesByName(allFiles);
+    const timesCommited = 
+        groupFilesByName(allFiles).filter(function(element){
+            return element.revisions >= threshold;
+        });
+
     let couplings = [];
 
     for(var commit of gitLog.commits()){
-        if ( commit.files.length > 1 ){
-            const combinations = getCombinations(commit.files);
+        const filesToStudy = commit.files.filter(function(file){
+            const index = timesCommited.findIndex(function(element){
+                return element.file == file.path;
+            });
+
+            return index !== -1;
+        });
+
+        if ( filesToStudy.length > 1 ){
+            const combinations = getCombinations(filesToStudy);
             for(var combination of combinations){
                 const index = couplings.findIndex(function(element){
                     return element.file1 === combination[0].path 
@@ -372,12 +384,10 @@ module.exports = {
             });
         });
     },
-    coupling(configuration){
+    coupling(configuration, threshold){
         this.init(configuration);
-
-        return getCouplings();
-
+        threshold = threshold || 1;
         
-
+        return getCouplings(threshold);
     }
 };
