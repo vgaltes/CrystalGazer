@@ -166,3 +166,15 @@ where:
 - '-w "./RepoFolder": it's an optional parameter that indicates the working folder.
 
 This will show you an ordered list of the files with more churn. Churn is calculated as the sum of the lines added minus the lines deleted for each time the file has been committed.
+
+### File churn over time
+
+```
+crystalgazer fileChurn test -w "./RepoFolder"
+```
+
+where:
+- test: is the name of the configuration.
+- '-w "./RepoFolder": it's an optional parameter that indicates the working folder.
+
+This will show you two line charts with the evolution of the files added and files modified in the project over time.

@@ -237,6 +237,36 @@ let churn = function(configName, options){
     drawText('Churn (Press ESC to exit)', text);
 }
 
+let fileChurn = function(configName, options){
+    const cgConfig = getConfigFrom(configName, options);
+
+    const fileChurn = cg.fileChurn(cgConfig);
+
+    createScreen();
+    const grid = new contrib.grid({rows: 2, cols: 1, screen: screen});
+    
+    var linesSeries = {
+        title: 'Added',
+        x: fileChurn.map(function(c){return c.date;}),
+        y: fileChurn.map(function(c){return c.added;}),
+        style: {
+            line: 'blue'
+           }
+     };
+    addLineChartTo(grid, 0, 0, 'Files added over time (Press ESC to exit)',linesSeries);
+
+    var tabsSeries = {
+        title: 'Modified',
+        x: fileChurn.map(function(c){return c.date;}),
+        y: fileChurn.map(function(c){return c.modified;}),
+        style: {
+            line: 'red'
+        }
+    };
+    addLineChartTo(grid, 1, 0, 'Files modified over time (Press ESC to exit)',tabsSeries);
+    screen.render();
+};
+
 program
     .version(pkg.version)
     .command('init <configName>')
@@ -290,10 +320,15 @@ program
     .option('-t, --threshold <threshold>', 'minimum number of commits')
     .action(coupling); 
 
-    program
+program
     .command('churn <configName>')
     .option('-w, --workingDirectory <working_directory>', 'working directory')
     .action(churn); 
+
+program
+    .command('fileChurn <configName>')
+    .option('-w, --workingDirectory <working_directory>', 'working directory')
+    .action(fileChurn); 
 
 program.action(function(){program.outputHelp();});
 

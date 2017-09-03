@@ -326,6 +326,45 @@ let getChurn = function(configuration){
     });
 };
 
+let getFileChurn = function(configuration){
+    const orderedCommits = sortBy(gitLog.commits(), (a, b) => {
+        const date1 = dateFns.parse(a.date);
+        const date2 = dateFns.parse(b.date);
+        return dateFns.compareAsc(date1, date2);
+    });
+
+    let alreadyAddedFiles = [];
+    let commitFileChurn = [];
+
+    for(var commit of orderedCommits){
+        let filesAdded = 0;
+        let filesModified = 0;
+
+        for(var file of commit.files){
+            const index = alreadyAddedFiles.findIndex(function(element){
+                return element === file.path;
+            });
+
+            if (index === -1){
+                alreadyAddedFiles.push(file.path);
+                filesAdded++;
+            }
+            else{
+                filesModified++;
+            }
+        }
+
+        commitFileChurn.push(
+            {
+                hash: commit.hash,
+                date: commit.date,
+                added: filesAdded,
+                modified: filesModified
+            });
+    }
+    return commitFileChurn;
+}
+
 module.exports = {    
     init(configuration){
         checkIsRepositoryRootFolder(configuration.workingDirectory);
@@ -417,5 +456,10 @@ module.exports = {
         this.init(configuration);
 
         return getChurn(configuration);
+    },
+    fileChurn(configuration){
+        this.init(configuration);
+
+        return getFileChurn(configuration);
     }
 };
