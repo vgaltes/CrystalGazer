@@ -151,7 +151,7 @@ where:
 - test: is the name of the configuration.
 - '-w "./RepoFolder": it's an optional parameter that indicates the working folder.
 - '-n 2': it's an optional parameter that indicates the number of items to display.
-- '-n 5': it's an optional parameter that indicates the minimum number of times a file has to have been commited in order to be able to be considered.
+- '-t 5': it's an optional parameter that indicates the minimum number of times a file has to have been commited in order to be able to be considered.
 
 This will show you an ordered list of the files that have been committed together more times. You'll be able to spot hidden dependencies. We're displaying 40 elements.
 
