@@ -37,7 +37,9 @@ let getAllFilesWithCommitInformation = function(commits){
                     file: file.path,
                     hash: commit.hash,
                     date: commit.date,
-                    author: commit.author
+                    author: commit.author,
+                    added: file.added,
+                    removed: file.removed
                 };
             });
             return files;
@@ -301,7 +303,28 @@ let getCouplings = function(threshold){
     }).sort(function(item1, item2){
         return item2.coupling - item1.coupling;
     });
-}
+};
+
+let getChurnNumber = function(number){
+    return Number(number);
+};
+
+let getChurn = function(configuration){
+    const allFiles = getAllCommitsByFileFrom(gitLog.commits());
+    
+    return allFiles.filter(function(element){
+            return element[0].added !== '-';
+        }).map(function(element){
+            const churn = element.reduce(function(acc, item){
+                return acc + getChurnNumber(item.added) - getChurnNumber(item.removed);
+            }, 0);
+
+        return {
+            file: element[0].file,
+            churn: churn
+        }
+    });
+};
 
 module.exports = {    
     init(configuration){
@@ -387,7 +410,12 @@ module.exports = {
     coupling(configuration, threshold){
         this.init(configuration);
         threshold = threshold || 1;
-        
+
         return getCouplings(threshold);
+    },
+    churn(configuration){
+        this.init(configuration);
+
+        return getChurn(configuration);
     }
 };

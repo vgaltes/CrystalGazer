@@ -154,3 +154,15 @@ where:
 - '-n 5': it's an optional parameter that indicates the minimum number of times a file has to have been commited in order to be able to be considered.
 
 This will show you an ordered list of the files that have been committed together more times. You'll be able to spot hidden dependencies. We're displaying 40 elements.
+
+### Churn by file
+
+```
+crystalgazer churn test -w "./RepoFolder"
+```
+
+where:
+- test: is the name of the configuration.
+- '-w "./RepoFolder": it's an optional parameter that indicates the working folder.
+
+This will show you an ordered list of the files with more churn. Churn is calculated as the sum of the lines added minus the lines deleted for each time the file has been committed.

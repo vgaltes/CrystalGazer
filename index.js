@@ -223,6 +223,20 @@ let coupling = function(configName, options){
     drawText('Coupling (Press ESC to exit)', text);
 };
 
+let churn = function(configName, options){
+    const cgConfig = getConfigFrom(configName, options);
+    const numberOfItemsToDisplay = options.numberOfItems || 40;
+
+    const churn = cg.churn(cgConfig);
+
+    const text = churn.reduce(function(acc, element)
+    {
+        return acc + element.file + ': ' + element.churn + "\n";
+    }, "");
+
+    drawText('Churn (Press ESC to exit)', text);
+}
+
 program
     .version(pkg.version)
     .command('init <configName>')
@@ -275,6 +289,11 @@ program
     .option('-n, --numberOfItems <numItems>', 'number of items to display')
     .option('-t, --threshold <threshold>', 'minimum number of commits')
     .action(coupling); 
+
+    program
+    .command('churn <configName>')
+    .option('-w, --workingDirectory <working_directory>', 'working directory')
+    .action(churn); 
 
 program.action(function(){program.outputHelp();});
 
