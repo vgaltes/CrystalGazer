@@ -85,7 +85,8 @@ let createScreen = function(){
 
 let init = function(configName, options){
     const cgConfig = getConfigFrom(configName, options);
-    cg.init(cgConfig);
+
+    cg.init(cgConfig, options.after, options.before);
 };
 
 let numberOfCommits = function(configName, options){
@@ -271,6 +272,8 @@ program
     .version(pkg.version)
     .command('init <configName>')
     .option('-w, --workingDirectory <working_directory>', 'working directory')
+    .option('-a --after <after>', 'after date')
+    .option('-b --before <before>', 'before date')
     .action(init);
 
 program

@@ -127,8 +127,16 @@ module.exports = {
     
         return allFiles;
     },
-    createLog: function(file, workingDirectory){
-        const command = "git log --pretty=format:'[%H],%aN,%ad,%s' --date=local --numstat > " + file;
+    createLog: function(file, workingDirectory, after, before){
+        let dates = '';
+        if (after){
+            dates += ' --after ' + after;
+        }
+
+        if (before){
+            dates += ' --before ' + before;
+        }
+        const command = "git log --pretty=format:'[%H],%aN,%ad,%s' --date=local --numstat" + dates +"  > " + file;
 
         child_process.execSync(command,{
             cwd: workingDirectory

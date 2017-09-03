@@ -220,7 +220,7 @@ let createFileIfItDoesntExist = function(filePath){
     }
 };
 
-let createLogIfItDoesntExist = function(configuration){
+let createLogIfItDoesntExist = function(configuration, after, before){
     const cgFolder = path.join(configuration.workingDirectory, './.cg');
     if(!fileOrDirectoryExists(cgFolder)){
         fs.mkdirSync(cgFolder);
@@ -228,7 +228,7 @@ let createLogIfItDoesntExist = function(configuration){
 
     const filePath = path.join(cgFolder, configuration.name + '.log');
     if(!fileOrDirectoryExists(filePath)){
-        gitLog.createLog(filePath, configuration.workingDirectory);
+        gitLog.createLog(filePath, configuration.workingDirectory, after, before);
     }
 
     const invalidExtensionsFilePath = path.join(cgFolder, configuration.name + '.ignore');
@@ -366,9 +366,9 @@ let getFileChurn = function(configuration){
 }
 
 module.exports = {    
-    init(configuration){
+    init(configuration, after, before){
         checkIsRepositoryRootFolder(configuration.workingDirectory);
-        const paths = createLogIfItDoesntExist(configuration);
+        const paths = createLogIfItDoesntExist(configuration, after, before);
         resetConfiguration(configuration);
         
         const logFileContents = fs.readFileSync(paths.logFile).toString();

@@ -24,13 +24,17 @@ Crystal Gazer uses [blessed-contrib](https://github.com/yaronn/blessed-contrib).
 In order to create the files needed for Crystal Gazer to work you can run the following command
 
 ```
-crystalgazer init test -w "./RepoFolder"
+crystalgazer init test -w "./RepoFolder" -a 2016-05-05 -b 2016-05-24
 ```
 where:
 - test: is the name of the configuration. You can create different configurations for the same repository.
-- '-w "./RepoFolder": it's an optional parameter that indicates the working folder. Use it if you are running Crystal Gazer from the outside of your repo root folder.
+- -w "./RepoFolder": it's an optional parameter that indicates the working folder. Use it if you are running Crystal Gazer from the outside of your repo root folder.
+- -a 2016-05-05: it's an optional parameter to filter the log to show only commits more recent than a specific date. 
+- -b 2016-05-24: it's an optional parameter to filter the log to show only commits older than a specific date. 
 
 You don't need to explicitly call the init command. Every Crystal Gazer command calls it internally.
+
+The option to filter by dates is only included in the init command. So, if you want to filter by dates, you need to call it. The formats accepted for the dates are the ones accepted by the git log command. Check the [documentation](https://git-scm.com/docs/git-log#git-log---afterltdategt) for the details. We're not doing any validation, just passing your input to the command.
 
 This will create a folder called .cg in your repo. Make sure to add it into your .gitignore file.
 
