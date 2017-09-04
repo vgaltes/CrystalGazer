@@ -312,7 +312,7 @@ let getChurnNumber = function(number){
 let getChurn = function(configuration){
     const allFiles = getAllCommitsByFileFrom(gitLog.commits());
     
-    return allFiles.filter(function(element){
+    const churns = allFiles.filter(function(element){
             return element[0].added !== '-';
         }).map(function(element){
             const churn = element.reduce(function(acc, item){
@@ -323,7 +323,10 @@ let getChurn = function(configuration){
             file: element[0].file,
             churn: churn
         }
-    });
+        });
+
+
+    return sortBy(churns, (a, b) => b.churn - a.churn);
 };
 
 let getFileChurn = function(configuration){
