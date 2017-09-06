@@ -7,6 +7,8 @@ const mri = require('../src/mri');
 
 describe("Detect CSharp functions", function(){
     it("should detect functions", function(){
+        this.timeout(5000);
+        
         const expected = ["DiscoverTestsToExecute", "GetTestsThatCall", "GetTestsThatCall", "GetCallsInMethod", "GetTestMethodsInAssembly"];
 
         const code = fs.readFileSync('test/testRepo/aFile.cs').toString();
