@@ -1,0 +1,228 @@
+[55b72c04bf5a4665c7e549219ba408b06f084eea],Eilon Lipton,Tue Oct 20 04:38:01 2015,Add high-pri doc comments for views, controllers, HTML helpers, Startup
+diff --git a/src/Microsoft.AspNet.Mvc.Core/Builder/MvcApplicationBuilderExtensions.cs b/src/Microsoft.AspNet.Mvc.Core/Builder/MvcApplicationBuilderExtensions.cs
+--- a/src/Microsoft.AspNet.Mvc.Core/Builder/MvcApplicationBuilderExtensions.cs
++++ b/src/Microsoft.AspNet.Mvc.Core/Builder/MvcApplicationBuilderExtensions.cs
+@@ -24,19 +24,19 @@
+         public static IApplicationBuilder UseMvc(this IApplicationBuilder app)
+         {
+             if (app == null)
+             {
+                 throw new ArgumentNullException(nameof(app));
+             }
+ 
+             return app.UseMvc(routes =>
+             {
+             });
+         }
+ 
+         /// <summary>
+         /// Adds MVC to the <see cref="IApplicationBuilder"/> request execution pipeline
+         /// with a default route named 'default' and the following template:
+         /// '{controller=Home}/{action=Index}/{id?}'.
+         /// </summary>
+         /// <param name="app">The <see cref="IApplicationBuilder"/>.</param>
+-        /// <returns>The <paramref name="app"/>.</returns>
++        /// <returns>A reference to this instance after the operation has completed.</returns>
+
+[3a876e387f1d7816264a0444c91efe41bde99eaa],Pranav K,Thu Oct 1 05:04:56 2015,Replacing NotNullAttribute with thrown exceptions
+diff --git a/src/Microsoft.AspNet.Mvc.Core/Builder/MvcApplicationBuilderExtensions.cs b/src/Microsoft.AspNet.Mvc.Core/Builder/MvcApplicationBuilderExtensions.cs
+--- a/src/Microsoft.AspNet.Mvc.Core/Builder/MvcApplicationBuilderExtensions.cs
++++ b/src/Microsoft.AspNet.Mvc.Core/Builder/MvcApplicationBuilderExtensions.cs
+@@ -25,14 +24,19 @@
+-        public static IApplicationBuilder UseMvc([NotNull] this IApplicationBuilder app)
++        public static IApplicationBuilder UseMvc(this IApplicationBuilder app)
+         {
++            if (app == null)
++            {
++                throw new ArgumentNullException(nameof(app));
++            }
++
+             return app.UseMvc(routes =>
+             {
+             });
+         }
+ 
+         /// <summary>
+         /// Adds MVC to the <see cref="IApplicationBuilder"/> request execution pipeline
+         /// with a default route named 'default' and the following template:
+         /// '{controller=Home}/{action=Index}/{id?}'.
+         /// </summary>
+         /// <param name="app">The <see cref="IApplicationBuilder"/>.</param>
+         /// <returns>The <paramref name="app"/>.</returns>
+
+[f2fed5e9408562f1c888f772157ec9d88047ab9e],Henk Mollema,Tue Apr 28 21:34:22 2015,Included default route name and template in docs
+diff --git a/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs b/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs
+--- a/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs
++++ b/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs
+@@ -25,13 +25,14 @@
+         public static IApplicationBuilder UseMvc([NotNull] this IApplicationBuilder app)
+         {
+             return app.UseMvc(routes =>
+             {
+             });
+         }
+ 
+         /// <summary>
+         /// Adds MVC to the <see cref="IApplicationBuilder"/> request execution pipeline
+-        /// with a default route.
++        /// with a default route named 'default' and the following template:
++        /// '{controller=Home}/{action=Index}/{id?}'.
+         /// </summary>
+         /// <param name="app">The <see cref="IApplicationBuilder"/>.</param>
+         /// <returns>The <paramref name="app"/>.</returns>
+
+[3ca018375ac51fc2b0fad9b9e387aebb3324be11],Ajay Bhargav Baaskaran,Tue Apr 28 00:32:03 2015,Issue #1885 - Updated startup code in few websites
+diff --git a/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs b/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs
+--- a/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs
++++ b/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs
+@@ -25,13 +25,13 @@
+         public static IApplicationBuilder UseMvc([NotNull] this IApplicationBuilder app)
+         {
+             return app.UseMvc(routes =>
+             {
+             });
+         }
+ 
+         /// <summary>
+-        /// Adds Mvc to the <see cref="IApplicationBuilder"/> request execution pipeline
++        /// Adds MVC to the <see cref="IApplicationBuilder"/> request execution pipeline
+         /// with a default route.
+         /// </summary>
+         /// <param name="app">The <see cref="IApplicationBuilder"/>.</param>
+         /// <returns>The <paramref name="app"/>.</returns>
+
+[53f3a91f01c740f3cbf5209a9eeeefd614a6cbc2],Henk Mollema,Mon Apr 20 18:28:11 2015,Added UseMvcWithDefaultRoute extension to BuilderExtensions
+diff --git a/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs b/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs
+--- a/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs
++++ b/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs
+@@ -25,8 +25,13 @@
+         public static IApplicationBuilder UseMvc([NotNull] this IApplicationBuilder app)
+         {
+             return app.UseMvc(routes =>
+             {
+             });
+         }
+ 
+         /// <summary>
++        /// Adds Mvc to the <see cref="IApplicationBuilder"/> request execution pipeline
++        /// with a default route.
++        /// </summary>
++        /// <param name="app">The <see cref="IApplicationBuilder"/>.</param>
++        /// <returns>The <paramref name="app"/>.</returns>
+
+[071c6973182f2bcbee580764efd6e6717cd72ebf],Pranav K,Fri Jan 23 20:50:21 2015,Modify BuilderExtensions.UseMvc to not add any routes by default
+diff --git a/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs b/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs
+--- a/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs
++++ b/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs
+@@ -14,12 +24,8 @@
+         public static IApplicationBuilder UseMvc([NotNull] this IApplicationBuilder app)
+         {
+             return app.UseMvc(routes =>
+             {
+-                // Action style actions
+-                routes.MapRoute(null, "{controller}/{action}/{id?}", new { controller = "Home", action = "Index" });
+-
+-                // Rest style actions
+-                routes.MapRoute(null, "{controller}/{id?}");
+             });
+         }
+ 
++        /// <summary>
+
+[85ad1aeb96b95ec48ddb8abd0c4a3061206bc8ef],Chris Ross,Wed Sep 10 22:12:08 2014,Handle IBuilder rename to IApplicationBuilder.
+diff --git a/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs b/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs
+--- a/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs
++++ b/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs
+@@ -14,12 +14,12 @@
+-        public static IBuilder UseMvc([NotNull] this IBuilder app)
++        public static IApplicationBuilder UseMvc([NotNull] this IApplicationBuilder app)
+         {
+             return app.UseMvc(routes =>
+             {
+                 // Action style actions
+                 routes.MapRoute(null, "{controller}/{action}/{id?}", new { controller = "Home", action = "Index" });
+ 
+                 // Rest style actions
+                 routes.MapRoute(null, "{controller}/{id?}");
+             });
+         }
+ 
+
+[ecbc179d76cd16037306afc39438eedf4895a0a5],Ryan Nowak,Thu Jun 5 04:06:42 2014,Fix stylecop in Microsoft.AspNet.Mvc
+diff --git a/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs b/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs
+--- a/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs
++++ b/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs
+@@ -12,12 +12,12 @@
+         public static IBuilder UseMvc([NotNull] this IBuilder app)
+         {
+             return app.UseMvc(routes =>
+             {
+                 // Action style actions
+-                routes.MapRoute(null, "{controller}/{action}/{id?}", new { controller = "Home" , action = "Index" });
++                routes.MapRoute(null, "{controller}/{action}/{id?}", new { controller = "Home", action = "Index" });
+ 
+                 // Rest style actions
+                 routes.MapRoute(null, "{controller}/{id?}");
+             });
+         }
+ 
+
+[55f4dc4f534e41d33ba08fe97d30f7e2f2887db0],Yishai Galatzer,Thu May 8 23:45:10 2014,Remove the area routes Add id? to the routes
+diff --git a/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs b/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs
+--- a/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs
++++ b/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs
+@@ -26,11 +26,12 @@
+         public static IBuilder UseMvc([NotNull] this IBuilder app)
+         {
+             return app.UseMvc(routes =>
+             {
+-                routes.MapRoute(null, "{area}/{controller}/{action}", new { controller = "Home", action = "Index" });
+-                routes.MapRoute(null, "{area}/{controller}", new { controller = "Home" });
+-                routes.MapRoute(null, "{controller}/{action}", new { controller = "Home", action = "Index" });
+-                routes.MapRoute(null, "{controller}", new { controller = "Home" });
++                // Action style actions
++                routes.MapRoute(null, "{controller}/{action}/{id?}", new { controller = "Home" , action = "Index" });
++
++                // Rest style actions
++                routes.MapRoute(null, "{controller}/{id?}");
+             });
+         }
+ 
+
+[454129587241d62764c489874a8eb2fd4aeab761],harshgMSFT,Wed Apr 30 23:42:59 2014,Updating BuilderExtensions to use the new 'Named' MapRoute overload.
+diff --git a/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs b/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs
+--- a/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs
++++ b/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs
+@@ -11,11 +11,11 @@
+         public static IBuilder UseMvc([NotNull] this IBuilder app)
+         {
+             return app.UseMvc(routes =>
+             {
+-                routes.MapRoute("{area}/{controller}/{action}", new { controller = "Home", action = "Index" });
+-                routes.MapRoute("{area}/{controller}", new { controller = "Home" });
+-                routes.MapRoute("{controller}/{action}", new { controller = "Home", action = "Index" });
+-                routes.MapRoute("{controller}", new { controller = "Home" });
++                routes.MapRoute(null, "{area}/{controller}/{action}", new { controller = "Home", action = "Index" });
++                routes.MapRoute(null, "{area}/{controller}", new { controller = "Home" });
++                routes.MapRoute(null, "{controller}/{action}", new { controller = "Home", action = "Index" });
++                routes.MapRoute(null, "{controller}", new { controller = "Home" });
+             });
+         }
+ 
+
+[488ec2f52e8254da88453b8859bf1775c6812318],David Fowler,Wed Apr 30 02:00:49 2014,Added default routes overload
+diff --git a/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs b/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs
+--- a/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs
++++ b/src/Microsoft.AspNet.Mvc/BuilderExtensions.cs
+@@ -11,0 +11,11 @@
++        public static IBuilder UseMvc([NotNull] this IBuilder app)
++        {
++            return app.UseMvc(routes =>
++            {
++                routes.MapRoute("{area}/{controller}/{action}", new { controller = "Home", action = "Index" });
++                routes.MapRoute("{area}/{controller}", new { controller = "Home" });
++                routes.MapRoute("{controller}/{action}", new { controller = "Home", action = "Index" });
++                routes.MapRoute("{controller}", new { controller = "Home" });
++            });
++        }
++
