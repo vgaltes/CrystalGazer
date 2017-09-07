@@ -366,6 +366,14 @@ let getFileChurn = function(configuration){
             });
     }
     return commitFileChurn;
+};
+
+let getMriSummary = function(configuration, file, after, before){
+    // pillar after i before de l'init? // guardar-les a algun fitxer en el init?
+    
+    // Get function names for the file
+    // get log for each function name
+    // get statistics
 }
 
 module.exports = {    
@@ -464,5 +472,10 @@ module.exports = {
         this.init(configuration);
 
         return getFileChurn(configuration);
+    },
+    mri(configuration, after, before){
+        this.init(configuration, after, before);
+
+        return getMriSummary(configuration, after, before);
     }
 };

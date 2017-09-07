@@ -64,7 +64,7 @@ let getCommitFrom = function(lines, invalidExtensions, authorsMappings){
     }
 };
 
-let getCommitsInfoFrom = function getCommitsInfoFrom (lines, commits, invalidExtensions, authorsMappings){
+let getCommitsInfoFrom = function (lines, commits, invalidExtensions, authorsMappings){
     let indexEndFirstGroup = lines.findIndex(commitDelimiter);
     let remainingLines = lines;
 
@@ -76,7 +76,42 @@ let getCommitsInfoFrom = function getCommitsInfoFrom (lines, commits, invalidExt
             indexEndFirstGroup = lines.findIndex(commitDelimiter);
         }
     }
+};
+
+let getFunctionCommitFrom = function(rawCommit){
+    const diffLines = rawCommit[2].split(newLine);
+    const churn = diffLines.reduce(function(accum, line){
+        if ( line.startsWith('+ ')) {
+            accum += 1;
+        }
+        if ( line.startsWith('- ')) {
+            accum -= 1;
+        }
+        return accum;
+    }, 0);
+    let commitInfo = rawCommit[1].split(',');
+
+    return {
+        hash: rawCommit[0],
+        date: commitInfo[1],
+        churn: churn
+    }
 }
+
+let getFunctionCommitsInfoFrom = function (logFileContents, commits){
+    let lines = logFileContents.split(commitRegex).splice(1);
+    let indexEndFirstGroup = lines.findIndex(commitDelimiter);
+    let remainingLines = lines;
+
+    while (indexEndFirstGroup !== -1){
+        let remaining = lines.splice(indexEndFirstGroup + 1);
+        if ( lines.length > 0){
+            commits.push(getFunctionCommitFrom(lines));
+            lines = remaining;
+            indexEndFirstGroup = lines.findIndex(commitDelimiter);
+        }
+    }
+};
 
 let getInvalidExtensionsFrom = function(invalidExtensionsContents){
     let invalidExtensions = [];
@@ -99,6 +134,20 @@ let getAuthorsMappingFrom = function(authorsContents){
 
     return authorsMapping;
 };
+
+let getDatesParameters = function(after, before){
+    let dates = '';
+    if (after){
+        dates += ' --after ' + after;
+    }
+
+    if (before){
+        dates += ' --before ' + before;
+    }
+
+    return dates;
+};
+
 
 module.exports = {
     initFrom : function(logFileContents, invalidExtensionsContents, authorsFileContents){
@@ -128,18 +177,23 @@ module.exports = {
         return allFiles;
     },
     createLog: function(file, workingDirectory, after, before){
-        let dates = '';
-        if (after){
-            dates += ' --after ' + after;
-        }
+        const dates = getDatesParameters(after, before);
 
-        if (before){
-            dates += ' --before ' + before;
-        }
         const command = "git log --pretty=format:'[%H],%aN,%ad,%s' --date=local --numstat" + dates +"  > " + file;
 
         child_process.execSync(command,{
             cwd: workingDirectory
           });
+    },
+    createFunctionLog: function(workingDirectory, file, method, after, before){
+        const dates = getDatesParameters(after, before);
+        const command = "git log --pretty=format:'[%H],%aN,%ad,%s' --date=local --numstat" + dates +" -L:" + method + ":" + file;
+
+        const logResult = child_process.execSync(command,{
+            cwd: workingDirectory
+          }).toString();
+
+        var a = 0;
+        // parse function log
     }
 }
