@@ -79,12 +79,15 @@ let getCommitsInfoFrom = function (lines, commits, invalidExtensions, authorsMap
 };
 
 let getFunctionCommitFrom = function(rawCommit){
-    const diffLines = rawCommit[2].split(newLine);
+    const diffLines = rawCommit[2].split(newLine).filter(function(line){
+        return !line.startsWith('---') && !line.startsWith('+++');
+    });
+
     const churn = diffLines.reduce(function(accum, line){
-        if ( line.startsWith('+ ')) {
+        if ( line.startsWith('+')) {
             accum += 1;
         }
-        if ( line.startsWith('- ')) {
+        if ( line.startsWith('-')) {
             accum -= 1;
         }
         return accum;
