@@ -11,7 +11,7 @@ let getCSharpFunctionNamesFrom = function(code){
     const tokens  = new antlr4.CommonTokenStream(lexer);
     const parser = new CSharpParser.CSharpParser(tokens);
     
-    const tree = parser.namespace_member_declarations();   
+    const tree = parser.compilation_unit();   
     let res = [];
     const csharpFunctionListener = new CSharpFunctionListener(res);
     antlr4.tree.ParseTreeWalker.DEFAULT.walk(csharpFunctionListener, tree);

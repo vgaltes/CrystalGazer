@@ -188,7 +188,7 @@ module.exports = {
             cwd: workingDirectory
           });
     },
-    createFunctionLog: function(workingDirectory, file, method, after, before){
+    getFunctionLog: function(workingDirectory, file, method, after, before){
         const dates = getDatesParameters(after, before);
         const command = "git log --pretty=format:'[%H],%aN,%ad,%s' --date=local --numstat" + dates +" -L:" + method + ":" + file;
 
@@ -196,7 +196,9 @@ module.exports = {
             cwd: workingDirectory
           }).toString();
 
-        var a = 0;
-        // parse function log
+        const functionCommits = [];
+        getFunctionCommitsInfoFrom(logResult, functionCommits);
+        
+        return functionCommits;
     }
 }

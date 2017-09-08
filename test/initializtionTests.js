@@ -15,7 +15,7 @@ describe("Check git", function(){
             name: 'test'
         };
 
-        expect(() => cg.init(cgConfig)).to.throw('Running Crystal Gazer in a folder that is not the root of a repository.');
+        expect(() => cg.init(cgConfig)).to.throw("Can't initialize Crystal Gazer in a folder that is not the root of a repository.");
     });
 
     it("should'n run git log if the log file already exists", function(){

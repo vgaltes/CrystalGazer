@@ -1699,7 +1699,7 @@ var literalNames = [ null, "'\u00EF\u00BB\u00BF'", null, null, null, null,
                      "'*='", "'/='", "'%='", "'&='", "'|='", "'^='", "'<<'", 
                      "'<<='", "'{{'", null, null, null, null, null, null, 
                      null, null, null, null, "'define'", "'undef'", "'elif'", 
-                     "'endif'", "'line'", null, null, null, null, null, 
+                     "'endif'", "'line'", null, null, null, null, null, "'using'",
                      "'hidden'", null, null, null, "'}}'" ];
 
 var symbolicNames = [ null, "BYTE_ORDER_MARK", "SINGLE_LINE_DOC_COMMENT", 

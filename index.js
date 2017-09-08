@@ -268,6 +268,19 @@ let fileChurn = function(configName, options){
     screen.render();
 };
 
+let mri = function(configName, fileName, options){
+    const cgConfig = getConfigFrom(configName, options);
+
+    const mriSummary = cg.mri(cgConfig, fileName);
+
+    const text = mriSummary.reduce(function(acc, element)
+    {
+        return acc + '[' + element.method + '] Revisions: ' + element.revisions + ' | Churn: ' + element.churn + "\n";
+    }, "");
+
+    drawText('MRI (Press ESC to exit)', text);
+};
+
 program
     .version(pkg.version)
     .command('init <configName>')
@@ -332,6 +345,11 @@ program
     .command('fileChurn <configName>')
     .option('-w, --workingDirectory <working_directory>', 'working directory')
     .action(fileChurn); 
+
+program
+    .command('mri <configName> <fileName>')
+    .option('-w, --workingDirectory <working_directory>', 'working directory')
+    .action(mri); 
 
 program.action(function(){program.outputHelp();});
 

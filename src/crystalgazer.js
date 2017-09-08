@@ -2,11 +2,12 @@
 
 const fs = require('fs');
 const path = require('path');
-const complexity = require('../src/complexityAnaliser.js');
-const gitLog = require('../src/gitLog.js');
-const git = require('../src/git.js');
+const complexity = require('../src/complexityAnaliser');
+const gitLog = require('../src/gitLog');
+const git = require('../src/git');
 const dateFns = require('date-fns');
 const combinatorics = require('js-combinatorics');
+const mri = require('../src/mri');
 
 let currentConfiguration = "";
 
@@ -210,7 +211,7 @@ let fileOrDirectoryExists = function(item){
 let checkIsRepositoryRootFolder = function(directory){
     const gitFolder = path.join(directory, './.git');
     if ( !fileOrDirectoryExists(gitFolder)){
-        throw 'Running Crystal Gazer in a folder that is not the root of a repository.';
+        throw "Can't initialize Crystal Gazer in a folder that is not the root of a repository.'";
     }
 };
 
@@ -370,10 +371,25 @@ let getFileChurn = function(configuration){
 
 let getMriSummary = function(configuration, file, after, before){
     // pillar after i before de l'init? // guardar-les a algun fitxer en el init?
+    const mriSummary = [];
+    const filePath = path.join(configuration.workingDirectory, file);
+    const code = fs.readFileSync(filePath).toString(); // check for invalid file and throw exception
+    const functionNames = mri.getCSharpFunctionNamesFrom(code);
+    for(var functionName of functionNames){
+        const functionCommits = gitLog.getFunctionLog(configuration.workingDirectory, file, functionName); //after and before?
+        const aggregatedChurn = functionCommits.reduce(function(accum, element){
+            return accum + element.churn;
+        }, 0);
+
+        mriSummary.push({
+            method: functionName,
+            revisions: functionCommits.length,
+            churn: aggregatedChurn
+        });
+    }
     
-    // Get function names for the file
-    // get log for each function name
-    // get statistics
+    const orderedMriSummary = sortByNumberOfRevisions(mriSummary);
+    return orderedMriSummary;
 }
 
 module.exports = {    
@@ -473,9 +489,9 @@ module.exports = {
 
         return getFileChurn(configuration);
     },
-    mri(configuration, after, before){
+    mri(configuration, file, after, before){
         this.init(configuration, after, before);
 
-        return getMriSummary(configuration, after, before);
+        return getMriSummary(configuration,file, after, before);
     }
 };
