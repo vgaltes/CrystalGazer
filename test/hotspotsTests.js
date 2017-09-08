@@ -157,17 +157,4 @@ describe("Hotspot analysis acceptance tests", function(){
 
         expect(result).to.have.ordered.deep.members(expected);
     });
-
-    it("lalala", function(){
-        const cgConfig = {
-            workingDirectory : "../Mvc",
-            name: "functionName"
-        };
-
-        let filename = "src/Microsoft.AspNetCore.Mvc.Core/Builder/MvcApplicationBuilderExtensions.cs";
-
-        let result = cg.mri(cgConfig, filename);
-
-        expect(result).to.have.ordered.deep.members(expected);
-    });
 });
