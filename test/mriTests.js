@@ -63,15 +63,4 @@ describe("Mri tests", function(){
 
         // Check the dates of the commit
     });
-
-    it("should write the dates in the log", function(){
-        const cgConfig = {
-            workingDirectory : "test/testRepo",
-            name: "withNoDates"
-        };
-
-        cg.init(cgConfig);
-
-        //delete log file
-    });
 });
