@@ -2,6 +2,7 @@
 
 const child_process = require('child_process');
 const path = require('path');
+const fs = require('fs');
 
 const commitRegex = /\[(.*)\],(.*)/;
 const newLine = "\n";
@@ -9,8 +10,10 @@ const fileDelimiter = newLine;
 const tab = "\t";
 const carrierReturn = "\r";
 const invalidFileLines = ["\n", "", "\r"];
+const datesSeparator = '==========';
 
 let allCommits = [];
+let after, before;
 
 let commitDelimiter = function (element){
     return element.startsWith("\n") || element.startsWith("\r\n");
@@ -151,6 +154,29 @@ let getDatesParameters = function(after, before){
     return dates;
 };
 
+let getDatesInfoFrom = function(allRawCommits){
+    for(var line of allRawCommits){
+        const lineSplitted = line.split(':');
+        if (lineSplitted[0] === 'after') after = lineSplitted[1];
+        else if (lineSplitted[0] === 'before') before = lineSplitted[1];
+    }
+};
+
+let prePendDates = function(file, after, before){
+    let dateString = '';
+    if (after){
+        dateString += 'after:'+after+'\n';
+    }
+    if(before){
+        dateString += 'before:'+before+'\n';
+    }
+    if (after || before){
+        dateString += datesSeparator+'\n';
+        var buffer = new Buffer(dateString);
+        const logFile = fs.openSync(file, 'a+');
+        fs.writeSync(logFile, buffer, 0, buffer.length, 0);
+    }
+};
 
 module.exports = {
     initFrom : function(logFileContents, invalidExtensionsContents, authorsFileContents){
@@ -160,6 +186,12 @@ module.exports = {
         let authorsMappings = getAuthorsMappingFrom(authorsFileContents);
 
         getCommitsInfoFrom(allRawCommits, allCommits, invalidExtensions, authorsMappings);
+
+        const datesSplit = logFileContents.split(datesSeparator);
+        if (datesSplit.length > 1){
+            const datesPart = datesSplit[0].split(newLine);
+            getDatesInfoFrom(datesPart);
+        }        
     },
     commits : function(){
         return allCommits.slice();
@@ -187,8 +219,10 @@ module.exports = {
         child_process.execSync(command,{
             cwd: workingDirectory
           });
+
+        prePendDates(file, after, before);
     },
-    getFunctionLog: function(workingDirectory, file, method, after, before){
+    getFunctionLog: function(workingDirectory, file, method){
         const dates = getDatesParameters(after, before);
         const command = "git log --pretty=format:'[%H],%aN,%ad,%s' --date=local --numstat" + dates +" -L:" + method + ":" + file;
 

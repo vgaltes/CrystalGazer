@@ -369,14 +369,23 @@ let getFileChurn = function(configuration){
     return commitFileChurn;
 };
 
-let getMriSummary = function(configuration, file, after, before){
-    // pillar after i before de l'init? // guardar-les a algun fitxer en el init?
+let getFileContents = function(workingDirectory, file) {
+    const filePath = path.join(workingDirectory, file);
+
+    if(!fileOrDirectoryExists(filePath)){
+        throw 'The file ' + filePath + " doesn't exist."
+    }
+    return fs.readFileSync(filePath).toString();
+};
+
+let getMriSummary = function(configuration, file){
+    const code = getFileContents(configuration.workingDirectory, file);
     const mriSummary = [];
-    const filePath = path.join(configuration.workingDirectory, file);
-    const code = fs.readFileSync(filePath).toString(); // check for invalid file and throw exception
+
+    
     const functionNames = mri.getCSharpFunctionNamesFrom(code);
     for(var functionName of functionNames){
-        const functionCommits = gitLog.getFunctionLog(configuration.workingDirectory, file, functionName); //after and before?
+        const functionCommits = gitLog.getFunctionLog(configuration.workingDirectory, file, functionName);
         const aggregatedChurn = functionCommits.reduce(function(accum, element){
             return accum + element.churn;
         }, 0);
@@ -489,9 +498,9 @@ module.exports = {
 
         return getFileChurn(configuration);
     },
-    mri(configuration, file, after, before){
-        this.init(configuration, after, before);
+    mri(configuration, file){
+        this.init(configuration);
 
-        return getMriSummary(configuration,file, after, before);
+        return getMriSummary(configuration,file);
     }
 };

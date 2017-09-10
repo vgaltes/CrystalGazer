@@ -6,8 +6,10 @@ const fs = require('fs');
 const mri = require('../src/mri');
 const gitLog = require('../src/gitLog');
 const rewire = require('rewire');
+const cg = require('../src/crystalgazer');
 
-describe("Detect CSharp functions", function(){
+describe("Mri tests", function(){
+
     it("should detect functions", function(){
         this.timeout(5000);
 
@@ -40,5 +42,25 @@ describe("Detect CSharp functions", function(){
             { "hash": "488ec2f52e8254da88453b8859bf1775c6812318", "date": "Wed Apr 30 02:00:49 2014", "churn": 11 }];
 
         expect(commits).to.have.ordered.deep.members(expected);
+    });
+
+    it("should throw an exception if the file doesn't exist", function(){
+        const cgConfig = {
+            workingDirectory : "test/testRepo",
+            name: "numCommits1"
+        };
+
+        expect(() => cg.mri(cgConfig, "an/unexisting/file.cs")).to.throw("The file test/testRepo/an/unexisting/file.cs doesn't exist.");
+    });
+
+    it("should read after and before from the log", function(){
+        const cgConfig = {
+            workingDirectory : "test/testRepo",
+            name: "withDates"
+        };
+
+        cg.init(cgConfig);
+        // how can I test this?
+        // Falta guardar les dades en el init.
     });
 });
