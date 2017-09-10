@@ -60,7 +60,18 @@ describe("Mri tests", function(){
         };
 
         cg.init(cgConfig);
-        // how can I test this?
-        // Falta guardar les dades en el init.
+
+        // Check the dates of the commit
+    });
+
+    it("should write the dates in the log", function(){
+        const cgConfig = {
+            workingDirectory : "test/testRepo",
+            name: "withNoDates"
+        };
+
+        cg.init(cgConfig);
+
+        //delete log file
     });
 });
