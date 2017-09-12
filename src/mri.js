@@ -1,23 +1,15 @@
 "use strict"
 
-const antlr4 = require('antlr4/index');
-const CSharpParser = require('./antlr/CSharpParser.js');
-const CSharpLexer = require('./antlr/CSharpLexer.js');
-const CSharpFunctionListener = require('./antlr/CSharpFunctionListener').CSharpFunctionListener;
+const child_process = require('child_process');
 
-let getCSharpFunctionNamesFrom = function(code){
-    const chars = new antlr4.InputStream(code);
-    const lexer = new CSharpLexer.CSharpLexer(chars);
-    const tokens  = new antlr4.CommonTokenStream(lexer);
-    const parser = new CSharpParser.CSharpParser(tokens);
+let getCSharpFunctionNamesFrom = function(filePath){
+    const command = 'dotnet \"./libs/MriCSharp/MriCSharp.App.dll\" ' + filePath;
     
-    const tree = parser.compilation_unit();   
-    let res = [];
-    const csharpFunctionListener = new CSharpFunctionListener(res);
-    antlr4.tree.ParseTreeWalker.DEFAULT.walk(csharpFunctionListener, tree);
-
-    return res;
-}
+    let result = child_process.execSync(command);
+    let functionNames = result.toString().split('\n');
+    
+    return functionNames.splice(0, functionNames.length - 1);
+};
 
 module.exports = {
     getCSharpFunctionNamesFrom : getCSharpFunctionNamesFrom

@@ -15,10 +15,17 @@ describe("Mri tests", function(){
 
         const expected = ["DiscoverTestsToExecute", "GetTestsThatCall", "GetTestsThatCall", "GetCallsInMethod", "GetTestMethodsInAssembly"];
 
-        const code = fs.readFileSync('test/testRepo/aFile.cs').toString();
-        const result = mri.getCSharpFunctionNamesFrom(code);
+        const result = mri.getCSharpFunctionNamesFrom('test/testRepo/aFile.cs');
 
         expect(result).to.have.ordered.deep.members(expected);
+    });
+
+    it("should detect functions in a file with regions", function(){
+        this.timeout(5000);
+
+        const result = mri.getCSharpFunctionNamesFrom('test/testRepo/ControllerActionInvokerTest.cs');
+
+        expect(result.length).to.be.equal(70);
     });
 
     it("should parse log -l output", function(){
