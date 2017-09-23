@@ -49,18 +49,18 @@ xdescribe("Mri tests", function(){
     });
 });
 
-describe("Mri acceptance tests", async function(){
-    it("should work", function(){
-        const cgConfig = {
-            workingDirectory : "../Mvc",
-            name: "functionName"
-        };
+// describe("Mri acceptance tests", async function(){
+//     it("should work", function(){
+//         const cgConfig = {
+//             workingDirectory : "../Mvc",
+//             name: "functionName"
+//         };
 
-        return cg.mri(cgConfig, "src/Microsoft.AspNetCore.Mvc.Core/Internal/ControllerActionInvoker.cs").then(function(result){
-            let a = 0;
-        }).catch(function(error){
-            let a = 0;
-        });
-        let a = 0;
-    });
-});
+//         return cg.mri(cgConfig, "src/Microsoft.AspNetCore.Mvc.Core/Internal/ControllerActionInvoker.cs").then(function(result){
+//             let a = 0;
+//         }).catch(function(error){
+//             let a = 0;
+//         });
+//         let a = 0;
+//     });
+// });
