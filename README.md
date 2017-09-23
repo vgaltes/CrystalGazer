@@ -20,6 +20,12 @@ npm install -g crystalgazer
 
 Crystal Gazer uses [blessed-contrib](https://github.com/yaronn/blessed-contrib). Windows users, follow the [pre-requisites](http://webservices20.blogspot.co.uk/2015/04/running-terminal-dashboards-on-windows.html)
 
+Crystal Gazer uses *git log -L:<funcName>:<filePath>*. In order to make this method work correctly with CSharp methods you need to add this lines to your git config (./.git/config):
+```
+[diff "csharp"]
+  xfuncname = ^[ \\t]*(((static|public|internal|private|protected|new|virtual|sealed|override|unsafe|async|partial)[ \\t]+)*[][<>@.~_[:alnum:]]+[ \\t]+[<>@._[:alnum:]]+[ \\t]*\\(.*\\))[ \\t]*$
+```
+
 # Initialisation
 In order to create the files needed for Crystal Gazer to work you can run the following command
 

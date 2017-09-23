@@ -4,6 +4,7 @@ const mocha = require('mocha');
 const expect = require('chai').expect;
 const cg = require('../src/crystalgazer');
 
+// TODO: think about a bettern name for churn
 describe("Calculate churn", function(){
     it("should get the churn of each file ordered by churn", function(){
         const cgConfig = {
@@ -40,6 +41,8 @@ describe("Calculate churn", function(){
             workingDirectory : "test/testRepo",
             name: "coupling"
         };
+
+        // TODO: difference between added and modified?
 
         const expected = [
             {

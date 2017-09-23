@@ -369,36 +369,88 @@ let getFileChurn = function(configuration){
     return commitFileChurn;
 };
 
-let getFileContents = function(workingDirectory, file) {
+let checkFileExists = function(workingDirectory, file) {
     const filePath = path.join(workingDirectory, file);
 
     if(!fileOrDirectoryExists(filePath)){
         throw 'The file ' + filePath + " doesn't exist."
     }
-    return fs.readFileSync(filePath).toString();
 };
 
-let getMriSummary = function(configuration, file){
-    const code = getFileContents(configuration.workingDirectory, file);
-    const mriSummary = [];
+let saveFile = function(fileContents, file, commit, workingDirectory){
+    const baseName = path.basename(file);
+    const fileName = baseName + "." + commit;
+    const tempFolder = path.join(workingDirectory, '.cg', 'temp');
+    if(!fileOrDirectoryExists(tempFolder)){
+        fs.mkdirSync(tempFolder);
+    };
 
+    const filePath = path.join(tempFolder, fileName);
+    fs.writeFileSync(filePath, fileContents);
     
-    const functionNames = mri.getCSharpFunctionNamesFrom(code);
-    for(var functionName of functionNames){
-        const functionCommits = gitLog.getFunctionLog(configuration.workingDirectory, file, functionName);
-        const aggregatedChurn = functionCommits.reduce(function(accum, element){
+    return filePath;
+};
+
+let getPairsFrom = function(items){
+    const pairs = [];
+
+    for(var i = 0; i < items.length -1; i++){
+        pairs.push({
+            filePath1: items[i],
+            filePath2: items[i+1]
+        });
+    }
+
+    return pairs;
+};
+
+let getMriSummaryFor = function(configuration, file, functionName){
+    const commitList = getAllCommitsFor(gitLog.commits(), file);
+    
+    const promises = commitList.map(async function(item){
+        const fileContents = await git.getFileOnCommit(file, configuration.workingDirectory, item.hash);
+        const filePath = saveFile(fileContents, file, item.hash, configuration.workingDirectory);
+        return filePath;
+    });
+
+    return Promise.all(promises).then(function(fileRevisions){
+        const pairs = getPairsFrom(fileRevisions);
+
+        const mriSummary = pairs.map(function(item){
+            const functionCommits = mri.getCSharpFunctionModifications(item.filePath1, item.filePath2, functionName);
+            return functionCommits;
+        });
+        
+        const aggregatedChurn = mriSummary.reduce(function(accum, element){
             return accum + element.churn;
         }, 0);
 
-        mriSummary.push({
+        return {
             method: functionName,
-            revisions: functionCommits.length,
+            revisions: mriSummary.filter(function(item){return item.hasChanged === "True"}).length,
             churn: aggregatedChurn
-        });
+        };
+    });    
+};
+
+let getMriSummary = function(configuration, file){
+    const mriSummary = [];
+    const filePath = path.join(configuration.workingDirectory, file);
+
+    if(!fileOrDirectoryExists(filePath)){
+        throw 'The file ' + filePath + " doesn't exist."
     }
     
-    const orderedMriSummary = sortByNumberOfRevisions(mriSummary);
-    return orderedMriSummary;
+    const functionNames = mri.getCSharpFunctionNamesFrom(filePath);
+    const promises = functionNames.map(async function(functionName){
+        const functionSummary = await getMriSummaryFor(configuration, file, functionName);
+        return functionSummary;
+    });
+    
+    return Promise.all(promises).then(function(result){
+        const orderedMriSummary = sortByNumberOfRevisions(result);
+        return orderedMriSummary;
+    });    
 }
 
 module.exports = {    
@@ -501,6 +553,8 @@ module.exports = {
     mri(configuration, file){
         this.init(configuration);
 
-        return getMriSummary(configuration,file);
+        return getMriSummary(configuration,file).then(function(results){
+            return results;
+        });
     }
 };

@@ -221,18 +221,5 @@ module.exports = {
           });
 
         prePendDates(file, after, before);
-    },
-    getFunctionLog: function(workingDirectory, file, method){
-        const dates = getDatesParameters(after, before);
-        const command = "git log --pretty=format:'[%H],%aN,%ad,%s' --date=local --numstat" + dates +" -L:" + method + ":" + file;
-
-        const logResult = child_process.execSync(command,{
-            cwd: workingDirectory
-          }).toString();
-
-        const functionCommits = [];
-        getFunctionCommitsInfoFrom(logResult, functionCommits);
-        
-        return functionCommits;
     }
 }

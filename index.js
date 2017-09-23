@@ -271,14 +271,14 @@ let fileChurn = function(configName, options){
 let mri = function(configName, fileName, options){
     const cgConfig = getConfigFrom(configName, options);
 
-    const mriSummary = cg.mri(cgConfig, fileName);
+    cg.mri(cgConfig, fileName).then(function(mriSummary){
+        const text = mriSummary.reduce(function(acc, element)
+        {
+            return acc + '[' + element.method + '] Revisions: ' + element.revisions + ' | Churn: ' + element.churn + "\n";
+        }, "");
 
-    const text = mriSummary.reduce(function(acc, element)
-    {
-        return acc + '[' + element.method + '] Revisions: ' + element.revisions + ' | Churn: ' + element.churn + "\n";
-    }, "");
-
-    drawText('MRI (Press ESC to exit)', text);
+        drawText('MRI (Press ESC to exit)', text);
+    });
 };
 
 program
