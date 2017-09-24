@@ -9,7 +9,6 @@ const rewire = require('rewire');
 const cg = require('../src/crystalgazer');
 
 xdescribe("Mri tests", function(){
-
     it("should detect functions", function(){
         this.timeout(5000);
 
@@ -36,31 +35,4 @@ xdescribe("Mri tests", function(){
 
         expect(() => cg.mri(cgConfig, "an/unexisting/file.cs")).to.throw("The file test/testRepo/an/unexisting/file.cs doesn't exist.");
     });
-
-    it("should read after and before from the log", function(){
-        const cgConfig = {
-            workingDirectory : "test/testRepo",
-            name: "withDates"
-        };
-
-        cg.init(cgConfig);
-
-        // Check the dates of the commits
-    });
 });
-
-// describe("Mri acceptance tests", async function(){
-//     it("should work", function(){
-//         const cgConfig = {
-//             workingDirectory : "../Mvc",
-//             name: "functionName"
-//         };
-
-//         return cg.mri(cgConfig, "src/Microsoft.AspNetCore.Mvc.Core/Internal/ControllerActionInvoker.cs").then(function(result){
-//             let a = 0;
-//         }).catch(function(error){
-//             let a = 0;
-//         });
-//         let a = 0;
-//     });
-// });
