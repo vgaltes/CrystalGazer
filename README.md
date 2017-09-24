@@ -20,11 +20,7 @@ npm install -g crystalgazer
 
 Crystal Gazer uses [blessed-contrib](https://github.com/yaronn/blessed-contrib). Windows users, follow the [pre-requisites](http://webservices20.blogspot.co.uk/2015/04/running-terminal-dashboards-on-windows.html)
 
-Crystal Gazer uses *git log -L:<funcName>:<filePath>*. In order to make this method work correctly with CSharp methods you need to add this lines to your git config (./.git/config):
-```
-[diff "csharp"]
-  xfuncname = ^[ \\t]*(((static|public|internal|private|protected|new|virtual|sealed|override|unsafe|async|partial)[ \\t]+)*[][<>@.~_[:alnum:]]+[ \\t]+[<>@._[:alnum:]]+[ \\t]*\\(.*\\))[ \\t]*$
-```
+Crystal Gazer uses a .Net Core 1.1 app to get information about the methods in a file in a CSharp project. So, if you pretend to use the MRI functionality with a CSharp file (the only one available right now), you'll need to have .Net Core installed.
 
 # Initialisation
 In order to create the files needed for Crystal Gazer to work you can run the following command
@@ -188,3 +184,16 @@ where:
 - '-w "./RepoFolder": it's an optional parameter that indicates the working folder.
 
 This will show you two line charts with the evolution of the files added and files modified in the project over time.
+
+### MRI of a file
+
+```
+crystalgazer mri test "src/a/folder/aFile.cs" -w "./RepoFolder"
+```
+
+where:
+- test: is the name of the configuration.
+- "src/a/folder/aFile.cs": the path of the file we want to study.
+- '-w "./RepoFolder": it's an optional parameter that indicates the working folder.
+
+This will show you a list of the methods that exist in the file provided ordered by the number of revisions that the method has suffered and the information of the churn of that method. This functionality is only availalbe in CSharp files and it could be really slow to calculate.

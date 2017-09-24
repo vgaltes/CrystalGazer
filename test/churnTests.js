@@ -42,8 +42,6 @@ describe("Calculate churn", function(){
             name: "coupling"
         };
 
-        // TODO: difference between added and modified?
-
         const expected = [
             {
                 hash: 'c1d6a2c0acf324aa7f6c117593db6c7ab2628394',
