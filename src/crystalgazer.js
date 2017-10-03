@@ -155,6 +155,25 @@ let groupFilesByName = function(files){
     }, []);
 };
 
+let groupCommitsByFileName = function(commits){
+    return commits.reduce(function(acc, item) {  
+        for(var file of item.files){
+            const index = acc.findIndex(function(element){
+                return element.file === file.path;
+            });
+            if ( index === -1 ){
+                acc.push({file: file.path, authors: new Set().add(item.author)});
+            }
+            else{
+                acc[index].authors.add(item.author);
+            }
+        }
+        
+        
+        return acc;
+    }, []);
+};
+
 let getComplexityFor = function(commits, filePath, workingDirectory){
     const promises = commits.map(async function(commit){
         const file = await git.getFileOnCommit(filePath, workingDirectory, commit.hash); 
@@ -189,8 +208,8 @@ let sortByNumberOfLines = function(files){
     return sortBy(files, (a,b) => b.lines - a.lines);
 };
 
-let sortByNumberOfCommits = function(files){
-    return sortBy(files, (a, b) => b.length - a.length);
+let sortByNumberOfAuthors = function(files){
+    return sortBy(files, (a, b) => b.authors.size - a.authors.size);
 };
 
 let sortBy = function(list, sortFunction){
@@ -512,12 +531,15 @@ module.exports = {
     authorsByFile(configuration){
         this.init(configuration);
 
-        const allFiles = getAllCommitsByFileFrom(gitLog.commits());
-        const sortedFiles = sortByNumberOfCommits(allFiles);
+        //const allFiles = getAllCommitsByFileFrom(gitLog.commits());
+        //const sortedFiles = sortByNumberOfCommits(allFiles);
+        const allCommits = gitLog.commits();
+        const files = groupCommitsByFileName(allCommits);
+        const sortedFiles = sortByNumberOfAuthors(files);
         const result = sortedFiles.map(function(element){
             return {
-                file: element[0].file,
-                authors: element.length
+                file: element.file,
+                authors: element.authors.size
             };
         });
         return result;

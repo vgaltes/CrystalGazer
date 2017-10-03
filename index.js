@@ -24,7 +24,7 @@ let getConfigFrom = function(configName, options){
     return cgConfig;
 };
 
-let drawTwoColumnTable = function(headers, data){
+let drawTwoColumnTable = function(label, headers, data){
     createScreen();
     const grid = new contrib.grid({rows: 1, cols: 1, screen: screen});
     const table = grid.set(0, 0, 1, 1,contrib.table,
@@ -135,7 +135,7 @@ let revisionsByFile = function(configName, options){
         return [item.file, item.revisions];
     });
 
-    drawTwoColumnTable(headers, data);    
+    drawTwoColumnTable('Revisions by file (Press ESC to exit)', headers, data);    
 };
 
 let linesByFile = function(configName, options){
@@ -147,7 +147,7 @@ let linesByFile = function(configName, options){
         return [item.file, item.lines];
     });
 
-    drawTwoColumnTable(headers, data);
+    drawTwoColumnTable('Lines by file (Press ESC to exit)', headers, data);
 };
 
 let authorsByFile = function(configName, options){
@@ -159,7 +159,7 @@ let authorsByFile = function(configName, options){
         return [item.file, item.authors];
     });
 
-    drawTwoColumnTable(headers, data);
+    drawTwoColumnTable('Authors by file (Press ESC to exit)', headers, data);
 };
 
 let addLineChartTo = function(grid, xpos, ypos, label, series){
