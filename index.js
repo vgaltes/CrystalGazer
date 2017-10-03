@@ -33,7 +33,7 @@ let drawTwoColumnTable = function(label, headers, data){
         , selectedFg: 'white'
         , selectedBg: 'blue'
         , interactive: true
-        , label: 'Revisions by file (Press ESC to exit)'
+        , label: label
         , width: '50%'
         , height: '50%'
         , border: {type: "line", fg: "cyan"}
