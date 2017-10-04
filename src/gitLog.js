@@ -3,6 +3,7 @@
 const child_process = require('child_process');
 const path = require('path');
 const fs = require('fs');
+const dateFns = require('date-fns');
 
 const commitRegex = /\[(.*)\],(.*)/;
 const newLine = "\n";
@@ -81,6 +82,7 @@ let getCommitsInfoFrom = function (lines, commits, invalidExtensions, authorsMap
     }
 };
 
+// TODO: remove?
 let getFunctionCommitFrom = function(rawCommit){
     const diffLines = rawCommit[2].split(newLine).filter(function(line){
         return !line.startsWith('---') && !line.startsWith('+++');
@@ -104,6 +106,7 @@ let getFunctionCommitFrom = function(rawCommit){
     }
 }
 
+// TODO: remove?
 let getFunctionCommitsInfoFrom = function (logFileContents, commits){
     let lines = logFileContents.split(commitRegex).splice(1);
     let indexEndFirstGroup = lines.findIndex(commitDelimiter);
@@ -178,6 +181,83 @@ let prePendDates = function(file, after, before){
     }
 };
 
+//TODO: copied from crystalgazer.js => refactor?
+let sortBy = function(list, sortFunction){
+    return list.sort(function(a, b){
+        return sortFunction(a, b);
+    });
+};
+
+let getNewPath = function(filePath){
+    return getPath(filePath, 1);
+}
+
+let getOldPath = function(filePath){
+    return getPath(filePath, 0);
+}
+
+let getPath = function(filePath, position){
+    const regexRename = /{(.*)}/;
+    const parts = filePath.split(regexRename);
+    if(parts.length > 1){
+        parts[1] = parts[1].split(" => ")[position];
+        return parts.join("").replace("//", "/");
+    }
+    else{
+        return parts[0].split(" => ")[position]
+    }
+}
+
+let applyRenaming = function(commits, renaming){
+    for(let commit of commits){
+        let renamed = false;
+        commit.files = commit.files.map(function(file){
+            if(renaming.old === file.path){
+                file.path = renaming.new;
+                renamed = true;
+            }
+            return file;
+        });
+        if(renamed){
+            let a = 0;
+        }
+    }
+}
+
+let applyRenamings = function(commits, renamings){
+    for(let renaming of renamings){
+        applyRenaming(commits, renaming);
+    }
+}
+
+let processRenamings = function(commits){
+    var commitsToReturn = [];
+
+    const orderedCommits = sortBy(commits, (a, b) => {
+        const date1 = dateFns.parse(a.date);
+        const date2 = dateFns.parse(b.date);
+        return dateFns.compareAsc(date1, date2);
+    });
+
+    let renamings = [];
+
+    for(var commit of orderedCommits){
+        for(var file of commit.files){
+            if ( file.path.indexOf("=>") >= 0 ){
+                var newPath = getNewPath(file.path);
+                var oldPath = getOldPath(file.path);
+                renamings.push({old: oldPath, new:newPath});
+                file.path = newPath;
+            }
+        }
+    }
+
+    applyRenamings(orderedCommits, renamings);
+    
+
+    return orderedCommits;
+}
+
 module.exports = {
     initFrom : function(logFileContents, invalidExtensionsContents, authorsFileContents){
         allCommits = [];
@@ -186,6 +266,7 @@ module.exports = {
         let authorsMappings = getAuthorsMappingFrom(authorsFileContents);
 
         getCommitsInfoFrom(allRawCommits, allCommits, invalidExtensions, authorsMappings);
+        allCommits = processRenamings(allCommits);
 
         const datesSplit = logFileContents.split(datesSeparator);
         if (datesSplit.length > 1){

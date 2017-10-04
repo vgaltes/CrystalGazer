@@ -472,6 +472,13 @@ let getMriSummary = function(configuration, file){
     });    
 }
 
+function fileExists(configuration, pathProperty) {
+    return function(file) {
+        const filePath = path.join(configuration.workingDirectory, pathProperty(file));
+        return fileOrDirectoryExists(filePath);
+    };
+}
+
 module.exports = {    
     init(configuration, after, before){
         checkIsRepositoryRootFolder(configuration.workingDirectory);
@@ -512,7 +519,8 @@ module.exports = {
     revisionsByFile(configuration){
         this.init(configuration);
 
-        const allFiles = gitLog.files();
+        const allFiles = gitLog.files().filter(fileExists(configuration, file => file.path));
+        
         const timesCommited = groupFilesByName(allFiles);
         const result = sortByNumberOfRevisions(timesCommited);
 
@@ -531,10 +539,9 @@ module.exports = {
     authorsByFile(configuration){
         this.init(configuration);
 
-        //const allFiles = getAllCommitsByFileFrom(gitLog.commits());
-        //const sortedFiles = sortByNumberOfCommits(allFiles);
         const allCommits = gitLog.commits();
-        const files = groupCommitsByFileName(allCommits);
+        const files = groupCommitsByFileName(allCommits)
+            .filter(fileExists(configuration, file => file.file));
         const sortedFiles = sortByNumberOfAuthors(files);
         const result = sortedFiles.map(function(element){
             return {
@@ -580,3 +587,5 @@ module.exports = {
         });
     }
 };
+
+

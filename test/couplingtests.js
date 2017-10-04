@@ -19,12 +19,12 @@ describe("Coupling tests", function(){
             },
             {
                 file1: 'src/file3.js',
-                file2: 'src/file1.js',
+                file2: 'src/file2.js',
                 coupling: 50
             },
             {
                 file1: 'src/file3.js',
-                file2: 'src/file2.js',
+                file2: 'src/file1.js',
                 coupling: 50
             },
             {

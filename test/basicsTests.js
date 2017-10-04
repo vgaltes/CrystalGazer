@@ -25,7 +25,7 @@ describe("Basic operations", function(){
 
         var result = cg.numberOfFilesChanged(cgConfig);
         
-        expect(result).to.equal(21);
+        expect(result).to.equal(22);
     });
 
     it("should get the files by type", function(){
@@ -105,19 +105,17 @@ describe("Basic operations acceptance tests", function(){
 
     it("should get authors", function(){
         var expected = [
+            "Martin Mazur",
             "Andreas H├Ñkansson",
-            "Jonathan Channon",
-            "Kristian Hellang",
-            "Julien Roncaglia",
-            "chrisc",
-            "Chris Cosgriff",
-            "mdk",
-            "Dan Barua",
-            "Sifiso Shezi",
-            "Phillip Haydon",
-            "Alan Evans",
-            "Steven Robbins",
-            "Asbj├©rn Ulsberg"
+            "John Downey",
+            "Pedro Felix",
+            "joao braganca",
+            "Joao Braganca",
+            "Graeme Foster",
+            "Jason",
+            "Haacked",
+            "RobertTheGrey",
+            "Mindaugas Mozuras"
             ];
 
         var cgConfig = {

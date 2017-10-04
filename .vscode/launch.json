@@ -4,12 +4,20 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
         {
             "type": "node",
             "request": "launch",
             "name": "Run init test in LambdaConf",
             "program": "${workspaceRoot}/index.js",
             "args": ["index.js", "init", "test", "-w", "../LambdaConf2016"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Run revisions by file in Mvc",
+            "program": "${workspaceRoot}/index.js",
+            "args": ["revisionsByFile", "twlod", "-w", "../Mvc"]
         },
         {
             "name": "Run mocha",

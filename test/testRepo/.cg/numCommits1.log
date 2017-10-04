@@ -27,3 +27,4 @@
 
 [c1d6a2c0acf324aa7f6c117593db6c7ab2628390],Jonathan Channon,Fri May 5 10:49:47 2016,Introduced new route declaration syntax again
 4	1	samples/Nancy.Demo.Authentication.Basic/MainModule.xml
+5	5	samples/Nancy.Demo.Authentication/MainModule.cs

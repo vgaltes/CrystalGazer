@@ -13,34 +13,9 @@ describe("Hotspot analysis", function(){
         };
 
         const expected = [
-            {
-                file: "samples/Nancy.Demo.Authentication.Forms/MainModule.cs",
-                revisions: 2
-            },
-            {
-                file: "samples/Nancy.Demo.Authentication/MainModule.cs",
-                revisions: 1
-            },
-            {
-                file: "samples/Nancy.Demo.Authentication.Basic/SecureModule.cs",
-                revisions: 1
-            },
-            {
-                file: "samples/Nancy.Demo.Hosting.Aspnet/MainModule.js",
-                revisions: 1
-            },
-            {
-                file: "samples/Nancy.Demo.Authentication.Forms/PartlySecureModule.cs",
-                revisions: 1
-            },
-            {
-                file: "samples/Nancy.Demo.Authentication.Forms/SecureModule.cs",
-                revisions: 1
-            },
-            {
-                file: "samples/Nancy.Demo.Authentication.Stateless/AuthModule.cs",
-                revisions: 1
-            }
+            { file: "samples/Nancy.Demo.Authentication/MainModule.cs", revisions: 2 },
+            { file: "samples/Nancy.Demo.Hosting.Aspnet/MainModule.js", revisions: 1 },
+            { file: "samples/Nancy.Demo.Authentication.Stateless/AuthModule.cs", revisions: 1 }
         ];
 
         let result = cg.revisionsByFile(cgConfig);
@@ -55,18 +30,10 @@ describe("Hotspot analysis", function(){
         };
 
         let expected = [
-            {
-                file: "samples/Nancy.Demo.Hosting.Aspnet/MainModule.js",
-                lines: 40
-            },
-            {
-                file: "samples/Nancy.Demo.Authentication.Stateless/AuthModule.cs",
-                lines: 35
-            },
-            {
-                file: "samples/Nancy.Demo.Authentication/MainModule.cs",
-                lines: 25
-            }];
+            { file: "samples/Nancy.Demo.Hosting.Aspnet/MainModule.js", lines: 40 },
+            { file: "samples/Nancy.Demo.Authentication.Stateless/AuthModule.cs", lines: 35 },
+            { file: "samples/Nancy.Demo.Authentication/MainModule.cs", lines: 25 }
+        ];
 
         let result = cg.linesByFile(cgConfig);
 
@@ -80,39 +47,32 @@ describe("Hotspot analysis", function(){
         };
 
         const expected = [
-            {
-                file: "samples/Nancy.Demo.Authentication.Forms/MainModule.cs",
-                authors: 2
-            },
-            {
-                file: "samples/Nancy.Demo.Authentication/MainModule.cs",
-                authors: 1
-            },
-            {
-                file: "samples/Nancy.Demo.Authentication.Basic/SecureModule.cs",
-                authors: 1
-            },
-            {
-                file: "samples/Nancy.Demo.Hosting.Aspnet/MainModule.js",
-                authors: 1
-            },
-            {
-                file: "samples/Nancy.Demo.Authentication.Forms/PartlySecureModule.cs",
-                authors: 1
-            },
-            {
-                file: "samples/Nancy.Demo.Authentication.Forms/SecureModule.cs",
-                authors: 1
-            },
-            {
-                file: "samples/Nancy.Demo.Authentication.Stateless/AuthModule.cs",
-                authors: 1
-            }
+            { file: "samples/Nancy.Demo.Authentication/MainModule.cs", authors: 2 }, 
+            { file: "samples/Nancy.Demo.Hosting.Aspnet/MainModule.js", authors: 1 }, 
+            { file: "samples/Nancy.Demo.Authentication.Stateless/AuthModule.cs", authors: 1 }
         ];
 
         let result = cg.authorsByFile(cgConfig);
 
         expect(result).to.include.ordered.deep.members(expected);
+    });
+    describe("deals with renamings", function(){
+        it("should get the number of revisions by file", function(){
+            const cgConfig = {
+                workingDirectory : "test/testRepo",
+                name: "renaming"
+            };
+    
+            const expected = [
+                { file: "samples/Nancy.Demo.Authentication/MainModule.cs", revisions: 6 },
+                { file: "samples/Nancy.Demo.Hosting.Aspnet/MainModule.js", revisions: 1 },
+                { file: "samples/Nancy.Demo.Authentication.Stateless/AuthModule.cs", revisions: 1 }
+            ];
+    
+            let result = cg.revisionsByFile(cgConfig);
+    
+            expect(result).to.include.ordered.deep.members(expected);
+        });
     });
 });
 
@@ -125,10 +85,8 @@ describe("Hotspot analysis acceptance tests", function(){
         };
 
         const expected = [
-            {file: "src/Nancy/Nancy.csproj", revisions: 363},
-            {file: "src/Nancy.Tests/Nancy.Tests.csproj", revisions: 207},
-            {file: "src/Nancy.sln", revisions: 141},
-            {file: "src/Nancy/NancyEngine.cs", revisions: 113}
+            {file: "samples/Nancy.Demo.Authentication.Stateless/AuthModule.cs", revisions: 2},
+            {file: "samples/Nancy.Demo.Authentication/MainModule.cs", revisions: 2}
         ];
 
         let result = cg.revisionsByFile(cgConfig);
