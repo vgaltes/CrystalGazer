@@ -515,12 +515,18 @@ let getMainContributorsByFile = function(configuration, filterByExisting, thresh
 
 let getMainContributors = function(configuration, filterByExisting){
     const threshold = 0.6;
-    return getContributors(configuration, filterByExisting, threshold);
+    return getContributors(configuration, filterByExisting, threshold)
+            .sort(function(a, b){
+                return b.files - a.files;
+            });
 }
 
 let getOnlyContributors = function(configuration, filterByExisting){
     const threshold = 1.0;
-    return getContributors(configuration, filterByExisting, threshold);
+    return getContributors(configuration, filterByExisting, threshold)
+            .sort(function(a, b){
+                return b.files - a.files;
+            });;
 }
 
 let getContributors = function(configuration, filterByExisting, threshold){

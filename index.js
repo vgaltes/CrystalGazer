@@ -281,6 +281,58 @@ let mri = function(configName, fileName, options){
     });
 };
 
+let mainContributors = function(configName, options){
+    const cgConfig = getConfigFrom(configName, options);
+    const existing = options.existing != undefined;
+
+    if(options.author){
+        const files = cg.filesWhoseMainContributorIs(options.author, cgConfig, existing);
+
+        const text = files.reduce(function(acc, element)
+        {
+            return acc + element + "\n";
+        }, "");
+
+        drawText(`Files where ${options.author} is the main contributor (Press ESC to exit)`, text);
+    }
+    else{
+        const contributors = cg.mainContributors(cgConfig, existing);
+        
+        const headers = ['Author', '# Files'];
+        const data = contributors.map(function(item){
+            return [item.author, item.files];
+        });
+    
+        drawTwoColumnTable('Main Contributors (Press ESC to exit)', headers, data);
+    }
+}
+
+let onlyContributors = function(configName, options){
+    const cgConfig = getConfigFrom(configName, options);
+    const existing = options.existing != undefined;
+
+    if(options.author){
+        const files = cg.filesWhoseOnlyContributorIs(options.author, cgConfig, existing);
+
+        const text = files.reduce(function(acc, element)
+        {
+            return acc + element + "\n";
+        }, "");
+
+        drawText(`Files where ${options.author} is the only contributor (Press ESC to exit)`, text);
+    }
+    else{
+        const contributors = cg.onlyContributor(cgConfig, existing);
+        
+        const headers = ['Author', '# Files'];
+        const data = contributors.map(function(item){
+            return [item.author, item.files];
+        });
+    
+        drawTwoColumnTable('Only Contributors (Press ESC to exit)', headers, data);
+    }
+}
+
 program
     .version(pkg.version)
     .command('init <configName>')
@@ -350,6 +402,20 @@ program
     .command('mri <configName> <fileName>')
     .option('-w, --workingDirectory <working_directory>', 'working directory')
     .action(mri); 
+
+program
+    .command('mainContributors <configName>')
+    .option('-w, --workingDirectory <working_directory>', 'working directory')
+    .option('-e, --existing', 'only existing files')
+    .option('-a, --author <author>', 'author')
+    .action(mainContributors); 
+
+program
+    .command('onlyContributors <configName>')
+    .option('-w, --workingDirectory <working_directory>', 'working directory')
+    .option('-e, --existing', 'only existing files')
+    .option('-a, --author <author>', 'author')
+    .action(onlyContributors); 
 
 program.action(function(){program.outputHelp();});
 
