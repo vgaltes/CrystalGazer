@@ -267,7 +267,7 @@ module.exports = {
 
         getCommitsInfoFrom(allRawCommits, allCommits, invalidExtensions, authorsMappings);
         
-        // TODO: keep the old name for the mri and code evolution
+        // TODO: keep the old name of the file for the mri and code evolution
         if (doRenamings){
             allCommits = processRenamings(allCommits);
         }

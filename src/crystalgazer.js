@@ -479,6 +479,102 @@ function fileExists(configuration, pathProperty) {
     };
 }
 
+let getAuthorWithMoreApportations = function(commits){
+    let authors = [];
+    for(var commit of commits){
+        let authorIndex = authors.findIndex(function(element){
+            return element.author === commit.author;
+        });
+        if(authorIndex !== -1){
+            authors[authorIndex].commits += 1;
+        }
+        else{
+            authors.push({author: commit.author, commits: 1});
+        }
+    }
+
+    const orderedAuthors = authors.sort(function(a1, a2){
+        return a2.commits - a1.commits;
+    });
+
+    return orderedAuthors[0];
+}
+
+let getMainContributorsByFile = function(configuration, filterByExisting, threshold){
+    const commitsByFile = getAllCommitsByFileFrom(gitLog.commits());
+    const filesWithMainContributors = commitsByFile.reduce(function(accum, commits){
+        let authorApportations = getAuthorWithMoreApportations(commits);
+        if(authorApportations.commits / commits.length >= threshold){
+            accum.push({ file: commits[0].file, author: authorApportations.author });
+        }
+        return accum;
+    }, []);
+
+    return filesWithMainContributors;
+}
+
+let getMainContributors = function(configuration, filterByExisting){
+    const threshold = 0.6;
+    return getContributors(configuration, filterByExisting, threshold);
+}
+
+let getOnlyContributors = function(configuration, filterByExisting){
+    const threshold = 1.0;
+    return getContributors(configuration, filterByExisting, threshold);
+}
+
+let getContributors = function(configuration, filterByExisting, threshold){
+    const mainContributorsByFile = getMainContributorsByFile(configuration, filterByExisting, threshold);
+    const mainContributors = mainContributorsByFile.reduce(function(accum, contribution){
+        if(filterByExisting && !fileExists(configuration, file => file.file)(contribution)){
+            return accum;
+        }
+
+        const authorIndex = accum.findIndex(function(element){
+            return element.author === contribution.author;
+        });
+
+        if (authorIndex === -1){
+            accum.push({ author: contribution.author, files: 1});
+        }
+        else{
+            accum[authorIndex].files += 1;
+        }
+        return accum;
+    }, []);
+
+    return mainContributors;
+}
+
+let getFilesWhoseContributorIs = function(author, configuration, filterByExisting, threshold){
+    const contributionsByFile = getMainContributorsByFile(configuration, filterByExisting, threshold);
+    const filesForAuthor = contributionsByFile.reduce(function(accum, element){
+        if(filterByExisting && !fileExists(configuration, file => file.file)(element)){
+            return accum;
+        }
+
+        if ( element.author === author){
+            accum.push(element.file);
+        }
+
+        return accum;
+    }, []);
+
+    return filesForAuthor;
+}
+
+let getFilesWhoseMainContributorIs = function(author, configuration, filterByExisting){
+    const threshold = 0.6;
+
+    return getFilesWhoseContributorIs(author, configuration, filterByExisting, threshold);
+}
+
+let getFilesWhoseOnlyContributorIs = function(author, configuration, filterByExisting){
+    const threshold = 1.0;
+
+    return getFilesWhoseContributorIs(author, configuration, filterByExisting, threshold);
+}
+
 module.exports = {    
     init(configuration, after, before, doRenamings = true){
         checkIsRepositoryRootFolder(configuration.workingDirectory);
@@ -585,5 +681,25 @@ module.exports = {
         return getMriSummary(configuration,file).then(function(results){
             return results;
         });
+    },
+    mainContributors(configuration, filterByExisting){
+        this.init(configuration);
+
+        return getMainContributors(configuration, filterByExisting);
+    },
+    filesWhoseMainContributorIs(author, configuration, filterByExisting){
+        this.init(configuration);
+
+        return getFilesWhoseMainContributorIs(author, configuration, filterByExisting);
+    },
+    onlyContributor(configuration, filterByExisting){
+        this.init(configuration);
+
+        return getOnlyContributors(configuration, filterByExisting);
+    },
+    filesWhoseOnlyContributorIs(author, configuration, filterByExisting){
+        this.init(configuration);
+
+        return getFilesWhoseOnlyContributorIs(author, configuration, filterByExisting);
     }
 };
