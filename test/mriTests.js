@@ -8,7 +8,7 @@ const gitLog = require('../src/gitLog');
 const rewire = require('rewire');
 const cg = require('../src/crystalgazer');
 
-describe("Mri tests", function(){
+xdescribe("Mri tests", function(){
     it("should detect functions", function(){
         this.timeout(5000);
 
