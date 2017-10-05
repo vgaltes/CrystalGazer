@@ -8,11 +8,11 @@ const gitLog = require('../src/gitLog');
 const rewire = require('rewire');
 const cg = require('../src/crystalgazer');
 
-xdescribe("Mri tests", function(){
+describe("Mri tests", function(){
     it("should detect functions", function(){
         this.timeout(5000);
 
-        const expected = ["DiscoverTestsToExecute", "GetTestsThatCall", "GetTestsThatCall", "GetCallsInMethod", "GetTestMethodsInAssembly"];
+        const expected = ["DiscoverTestsToExecute", "GetTestsThatCall", "GetCallsInMethod", "GetTestMethodsInAssembly"];
 
         const result = mri.getCSharpFunctionNamesFrom('test/testRepo/aFile.cs');
 
@@ -24,7 +24,7 @@ xdescribe("Mri tests", function(){
 
         const result = mri.getCSharpFunctionNamesFrom('test/testRepo/ControllerActionInvokerTest.cs');
 
-        expect(result.length).to.be.equal(70);
+        expect(result.length).to.be.equal(68);
     });
 
     it("should throw an exception if the file doesn't exist", function(){
