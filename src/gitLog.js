@@ -259,14 +259,18 @@ let processRenamings = function(commits){
 }
 
 module.exports = {
-    initFrom : function(logFileContents, invalidExtensionsContents, authorsFileContents){
+    initFrom : function(logFileContents, invalidExtensionsContents, authorsFileContents, doRenamings){
         allCommits = [];
         const allRawCommits = logFileContents.split(commitRegex).splice(1);
         let invalidExtensions = getInvalidExtensionsFrom(invalidExtensionsContents);
         let authorsMappings = getAuthorsMappingFrom(authorsFileContents);
 
         getCommitsInfoFrom(allRawCommits, allCommits, invalidExtensions, authorsMappings);
-        allCommits = processRenamings(allCommits);
+        
+        // TODO: keep the old name for the mri and code evolution
+        if (doRenamings){
+            allCommits = processRenamings(allCommits);
+        }
 
         const datesSplit = logFileContents.split(datesSeparator);
         if (datesSplit.length > 1){

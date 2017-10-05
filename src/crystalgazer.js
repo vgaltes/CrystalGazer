@@ -277,8 +277,8 @@ let getCombinations = function(files){
     return combinations;
 };
 
-let getCouplings = function(threshold){
-    const allFiles = gitLog.files();
+let getCouplings = function(configuration, threshold){
+    const allFiles = gitLog.files().filter(fileExists(configuration, file => file.path));
     const timesCommited = 
         groupFilesByName(allFiles).filter(function(element){
             return element.revisions >= threshold;
@@ -480,7 +480,7 @@ function fileExists(configuration, pathProperty) {
 }
 
 module.exports = {    
-    init(configuration, after, before){
+    init(configuration, after, before, doRenamings = true){
         checkIsRepositoryRootFolder(configuration.workingDirectory);
         const paths = createLogIfItDoesntExist(configuration, after, before);
         resetConfiguration(configuration);
@@ -488,7 +488,7 @@ module.exports = {
         const logFileContents = fs.readFileSync(paths.logFile).toString();
         const ignoreFileContents = fs.readFileSync(paths.ignoreFile).toString();
         const authorsFileContents = fs.readFileSync(paths.authorsFile).toString();
-        gitLog.initFrom(logFileContents, ignoreFileContents, authorsFileContents);
+        gitLog.initFrom(logFileContents, ignoreFileContents, authorsFileContents, doRenamings);
     },
     numberOfCommits(configuration){
         this.init(configuration);
@@ -552,7 +552,7 @@ module.exports = {
         return result;
     },
     complexityOverTime(configuration, filePath){
-        this.init(configuration);
+        this.init(configuration, undefined, undefined, false);
 
         const allCommitsForFile = getAllCommitsFor(gitLog.commits(), filePath);
         return getComplexityFor(allCommitsForFile, filePath, configuration.workingDirectory).then(function(results){
@@ -567,7 +567,7 @@ module.exports = {
         this.init(configuration);
         threshold = threshold || 1;
 
-        return getCouplings(threshold);
+        return getCouplings(configuration, threshold);
     },
     churn(configuration){
         this.init(configuration);
@@ -580,12 +580,10 @@ module.exports = {
         return getFileChurn(configuration);
     },
     mri(configuration, file){
-        this.init(configuration);
+        this.init(configuration, undefined, undefined, false);
 
         return getMriSummary(configuration,file).then(function(results){
             return results;
         });
     }
 };
-
-
