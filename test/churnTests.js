@@ -9,7 +9,7 @@ describe("Calculate churn", function(){
     it("should get the churn of each file ordered by churn", function(){
         const cgConfig = {
             workingDirectory : "test/testRepo",
-            name: "coupling"
+            name: "churn"
         };
 
         const expected = [
@@ -39,7 +39,7 @@ describe("Calculate churn", function(){
     it("should get the number of files added and modified in each commit", function(){
         const cgConfig = {
             workingDirectory : "test/testRepo",
-            name: "coupling"
+            name: "churn"
         };
 
         const expected = [
