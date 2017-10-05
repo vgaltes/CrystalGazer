@@ -1,4 +1,6 @@
 language: node_js
+dotnet: 1.0.3
+dist: trusty
 node_js:
   - "8"
 script: 
@@ -8,8 +10,8 @@ addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
-      - sourceline: 'deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-zesty-prod zesty main'
-        key_url: 'https://packages.microsoft.com/keys/microsoft.asc'
+      # - sourceline: 'deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-zesty-prod zesty main'
+      #   key_url: 'https://packages.microsoft.com/keys/microsoft.asc'
     packages:
       - libstdc++-4.9-dev
-      - dotnet-dev-1.1.4
+      #- dotnet-dev-1.1.4
