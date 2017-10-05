@@ -10,3 +10,4 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - libstdc++-4.9-dev
+      - dotnet-dev-1.1.4
