@@ -197,3 +197,31 @@ where:
 - '-w "./RepoFolder": it's an optional parameter that indicates the working folder.
 
 This will show you a list of the methods that exist in the file provided ordered by the number of revisions that the method has suffered and the information of the churn of that method. This functionality is only availalbe in CSharp files and it could be really slow to calculate.
+
+### Main contributors
+
+```
+crystalgazer mainContributors test -e -a "Someone" -w "../RepoFolder"
+```
+
+where:
+- test: is the name of the configuration.
+- '-e': it's an optional parameter that indicates that you want to exclude files that no longer exist.
+- '-a "Someone"': it's an optional parameter that indicates the user you want to get info from
+- '-w "./RepoFolder": it's an optional parameter that indicates the working folder.
+
+This will show you an ordered list of people that are the main contributor of a file. We consider someone is the main contributor of a file when she has more than 60% of the commits of that file. If you use the -a option, this will show you the list of file where the provided contributor is the main contributor.
+
+### Only contributors
+
+```
+crystalgazer onlyContributors test -e -a "Someone" -w "../RepoFolder"
+```
+
+where:
+- test: is the name of the configuration.
+- '-e': it's an optional parameter that indicates that you want to exclude files that no longer exist.
+- '-a "Someone"': it's an optional parameter that indicates the user you want to get info from
+- '-w "./RepoFolder": it's an optional parameter that indicates the working folder.
+
+This will show you an ordered list of people that are the only contributor of a file. We consider someone is the only contributor of a file when she is the only one to commit that file. If you use the -a option, this will show you the list of file where the provided contributor is the only contributor.
